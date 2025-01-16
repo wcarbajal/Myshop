@@ -26,7 +26,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth( {
     // session() se utiliza para agregar  la información del token a la session del usuario
     // lo que hace es que esté disponible en el cliente
     session( { session, token } ) {
-      console.log({token})
+      
       
       if (session.user) {
         

@@ -31,10 +31,8 @@ export const getPaginatedProductsCategoryWithImages = async ( {
         id: true,
       },
     } );
-    console.log( "category", category );
-    console.log( "categoryId", categoryId?.id );
-
     
+       
 
     if ( !categoryId ) {
       throw new Error( "Category not found" );
@@ -44,7 +42,7 @@ export const getPaginatedProductsCategoryWithImages = async ( {
     let totalCount;
     // 1. Obtener los productos
     if(category === 'Todos'){
-      console.log('Todos los productos');
+      
       products = await prisma.product.findMany( {
         take: take,
         skip: ( page - 1 ) * take,
@@ -91,7 +89,7 @@ export const getPaginatedProductsCategoryWithImages = async ( {
     }
    
 
-    console.log( "products", products );
+    
 
     // 2. Obtener el total de páginas
     // todo:

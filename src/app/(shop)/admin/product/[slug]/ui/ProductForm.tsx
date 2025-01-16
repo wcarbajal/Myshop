@@ -117,8 +117,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
     const { ok, product } = await createUpdateProduct( formData );
 
     if ( !ok ) {
-      console.log( "Product: ", product );      
-
+      
       alert( 'Producto no se pudo actualizar' );
       return;
     }

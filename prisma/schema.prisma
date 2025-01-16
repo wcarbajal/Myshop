@@ -144,6 +144,14 @@ model Account {
 
   @@id([provider, providerAccountId])
 }
+model VerificationToken {
+  identifier String @unique
+  token       String
+  expiresAt   DateTime
+  
+
+  @@id([identifier])
+}
 
 model Country {
   id   String @id

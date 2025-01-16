@@ -44,7 +44,7 @@ export const CategoryForm = ( { idCategory, nameCategory }: Props ) => {
   const onSubmit = async ( data: FormInputs ) => {
     //const formData = new FormData();
 
-    console.log( 'data', data );
+    
     let identificador = data.id === '' ? 'new' : data.id;
    
     const category = await createUpdateCategory( identificador, data.name );

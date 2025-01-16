@@ -57,7 +57,7 @@ export const UserForm = ( { user }: Props ) => {
   const onSubmit = async ( data: FormInputs ) => {
 
     const formData = new FormData();
-    console.log( 'Formdata', { formData } );
+    
 
     const { image, ...userToSave } = data;
 
@@ -76,7 +76,7 @@ export const UserForm = ( { user }: Props ) => {
     formData.append( "image", image[ 0 ] );
 
     const mensaje = await createUpdateUser( formData );
-    console.log(  mensaje.message  );
+    
 
     
     //window.location.replace( `/admin/user/${user.id}` ); 

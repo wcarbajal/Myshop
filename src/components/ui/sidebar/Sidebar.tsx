@@ -40,7 +40,7 @@ export const Sidebar = () => {
   }, []);
 
   const isAuthenticated = status;
-  console.log({session})
+  
   const isAdmin = session?.user?.role === "admin";
 
 

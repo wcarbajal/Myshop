@@ -27,7 +27,7 @@ export default async function CategoryByPage( { params, searchParams }: Props ) 
     page,
     category: category,
   } );
-  console.log(products);
+  
   const isExist = products.length === 0 ? true : false;
 
   

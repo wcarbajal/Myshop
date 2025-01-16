@@ -36,7 +36,7 @@ export const createUpdateUser = async ( formData: FormData ) => {
 
   const user = userParsed.data;
 
-  console.log( { user } );
+  
   const { id, ...rest } = user;
 
 
@@ -172,7 +172,7 @@ const uploadImages = async ( images: File[], publicid:string ) => {
         let resultado;
 
        if (publicid !== ''){
-          console.log( 'esta imagen se borrarà: ' + publicid );
+          
            cloudinary.uploader.destroy(publicid)               
         }
                

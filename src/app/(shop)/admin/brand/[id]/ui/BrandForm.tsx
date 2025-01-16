@@ -52,7 +52,7 @@ export const BrandForm = ( { idBrand, nameBrand, stateBrand }: Props ) => {
   const onSubmit = async ( data: FormInputs ) => {
     //const formData = new FormData();
 
-    console.log( 'data', data );
+    
     let identificador = data.id === '' ? 'new' : data.id;
    
     const brand = await createUpdateBrand( identificador, data.name, data.state! );
