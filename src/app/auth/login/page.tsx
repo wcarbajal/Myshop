@@ -1,6 +1,5 @@
 
 import { titleFont } from '@/config/fonts';
-import { LoginForm } from './ui/LoginForm';
 import { LoginForm2 } from './ui/LoginForm2';
 
 interface Props {

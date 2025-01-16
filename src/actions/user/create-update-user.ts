@@ -15,7 +15,7 @@ const userSchema = z.object( {
   name: z.string().min( 3 ).max( 255 ),
   email: z.string().email(),
   telefono: z.string().optional().nullable(),
-  password: z.string(),
+  password: z.string().optional().nullable(),
   role: z.enum( [ 'admin', 'user' ] ),
   state: z.enum( [ 'activo', 'inactivo' ] ),
   createdAt: z.date().optional().nullable(),
@@ -30,13 +30,13 @@ export const createUpdateUser = async ( formData: FormData ) => {
   const userParsed = userSchema.safeParse( data );
 
   if ( !userParsed.success ) {
-    
+
     return { ok: false };
   }
 
   const user = userParsed.data;
 
-  
+  console.log( { user } );
   const { id, ...rest } = user;
 
 
@@ -45,48 +45,57 @@ export const createUpdateUser = async ( formData: FormData ) => {
     const prismaTx = await prisma.$transaction( async ( tx ) => {
 
       let userNewUpdate: User;
-      let publicId: string ='';
+      let publicId: string = '';
 
 
       if ( id ) {
         // Actualizar
-        userNewUpdate = await prisma.user.update( {
+        const userNewUpdate = await prisma.user.update( {
           where: { id },
-          data: {
-            name: rest.name,
-            email: rest.email,
-            telefono: rest.telefono,            
-            role: rest.role,
-          }
-        } );
-        if ( userNewUpdate.password !== undefined){
-          // Hashear contraseña
-          userNewUpdate.password = await bcryptjs.hashSync( userNewUpdate.password );
-        }
-
-        //Obtener imagen guardada
-        const imageUrl = userNewUpdate.image
-
-       /*  const imageUrl = await prisma.user.findUnique( {
-          where: { id },
-          select: { image: true }
-        } ); */
-        
-        if(imageUrl !== null){
-           publicId = imageUrl.split('/').pop()?.split('.')[0] ?? '';
-        }
-
-        
-
-      } else {
-        // Crear
-
-        userNewUpdate = await prisma.user.create( {
           data: {
             name: rest.name,
             email: rest.email,
             telefono: rest.telefono,
-            password: rest.password,
+            role: rest.role,
+          }
+        } );
+        if ( rest.password === '' ) {
+          // Hashear contraseña
+          const passwordNew = await bcryptjs.hashSync( rest.password, 10 );
+          await prisma.user.update( {
+            where: {
+              id
+            },
+            data: {
+              password: passwordNew
+            }
+          } );
+        }
+
+        //Obtener imagen guardada
+        const imageUrl = userNewUpdate.image;
+
+        /*  const imageUrl = await prisma.user.findUnique( {
+           where: { id },
+           select: { image: true }
+         } ); */
+
+        if ( imageUrl !== null ) {
+          publicId = imageUrl.split( '/' ).pop()?.split( '.' )[ 0 ] ?? '';
+        }
+
+
+
+      } 
+      else {
+        // Crear
+
+        const userNewUpdate = await prisma.user.create( {
+          data: {
+            name: rest.name,
+            email: rest.email,
+            telefono: rest.telefono,
+            password: rest.password ?? '',
             role: rest.role,
           }
 
@@ -94,25 +103,18 @@ export const createUpdateUser = async ( formData: FormData ) => {
 
       }
 
-
-      
-
-
       // Proceso de carga y guardado de imagenes
       // Recorrer las imagenes y guardarlas
       if ( formData.getAll( 'image' ) ) {
         // [https://url.jpg, https://url.jpg]
 
-        
+
 
         const images = await uploadImages( formData.getAll( 'image' ) as File[], publicId );
 
         if ( !images ) {
           throw new Error( 'No se pudo cargar las imágenes, rollingback' );
         }
-
-       
-
 
         await prisma.user.update( {
           where: {
@@ -134,7 +136,7 @@ export const createUpdateUser = async ( formData: FormData ) => {
     // Todo: RevalidatePaths
     revalidatePath( '/admin/users' );
     revalidatePath( `/admin/user/${ user.id }` );
-    
+
 
 
     return {
@@ -156,31 +158,31 @@ export const createUpdateUser = async ( formData: FormData ) => {
 
 
 
-const uploadImages = async ( images: File[], publicid:string ) => {
+const uploadImages = async ( images: File[], publicid: string ) => {
 
- 
+
 
   try {
 
 
     const uploadPromises = images.map( async ( image ) => {
-     
+
       try {
         const Body = await image.arrayBuffer();
-       
+
         const base64Image = Buffer.from( Body ).toString( 'base64' );
         let resultado;
 
-       if (publicid !== ''){
-          
-           cloudinary.uploader.destroy(publicid)               
+        if ( publicid !== '' ) {
+          console.log( 'esta imagen se borrarà: ' + publicid );
+          cloudinary.uploader.destroy( publicid );
         }
-               
-        resultado =  cloudinary.uploader.upload( `data:image/png;base64,${ base64Image }`, {
+
+        resultado = cloudinary.uploader.upload( `data:image/png;base64,${ base64Image }`, {
           folder: 'users'
-           
+
         } ).then( r => r.secure_url );
-        
+
 
         return resultado;
 
