@@ -110,7 +110,7 @@ model User {
   email         String    @unique
   telefono      String?
   emailVerified DateTime?
-  password      String
+  password      String?
   role          Role      @default(user)
   image         String?
   state         State?    @default(activo)
@@ -120,7 +120,29 @@ model User {
   address UserAddress?
 
   // Relaciones
-  Order Order[]
+  Order   Order[]
+  Account Account[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
 }
 
 model Country {

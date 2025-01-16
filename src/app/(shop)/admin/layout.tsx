@@ -1,4 +1,4 @@
-import { auth } from '@/auth.config';
+import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 
 export default async function AdminLayout({children}: {
@@ -6,8 +6,10 @@ export default async function AdminLayout({children}: {
 }) {
 
   const session = await auth();
+  console.log(session)
 
   if ( session?.user.role !== 'admin' ) {
+    
     redirect('/auth/login');
   }
 

@@ -1,6 +1,7 @@
 
 import { titleFont } from '@/config/fonts';
 import { LoginForm } from './ui/LoginForm';
+import { LoginForm2 } from './ui/LoginForm2';
 
 interface Props {}
 
@@ -10,7 +11,7 @@ export default function LoginPage() {
 
       <h1 className={ `${ titleFont.className } text-4xl mb-5` }>Ingresar</h1>
 
-      <LoginForm />
+      <LoginForm2 />
     </div>
   );
 }

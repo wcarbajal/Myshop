@@ -1,7 +1,7 @@
-'use server';
+/* 'use server';
 
 
-import { signIn } from '@/auth.config';
+import { signIn } from '@/auth';
 import { sleep } from '@/utils';
  
 // ...
@@ -52,3 +52,4 @@ export const login = async(email:string, password: string) => {
 
 }
 
+ */

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import clsx from "clsx";
-import { useSession } from "next-auth/react";
+//import { useSession } from "next-auth/react";
 import {
   IoCloseOutline,
   IoLogInOutline,
@@ -15,15 +15,34 @@ import {
 } from "react-icons/io5";
 
 import { useUIStore } from "@/store";
-import { logout } from "@/actions";
+import { logout, retornarSession } from "@/actions";
+import { auth } from '@/auth';
+import { useEffect, useState } from 'react';
 
 export const Sidebar = () => {
   const isSideMenuOpen = useUIStore((state) => state.isSideMenuOpen);
   const closeMenu = useUIStore((state) => state.closeSideMenu);
 
-  const { data: session } = useSession();
-  const isAuthenticated = !!session?.user;
-  const isAdmin = session?.user.role === "admin";
+
+
+  //const { data: session, status,  update } = useSession();
+
+  const [session, setSession] = useState<any>(null);
+  const [status, setStatus] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const sessionData = await retornarSession();
+      setSession(sessionData);
+      setStatus(sessionData ? true : false);
+    };
+    fetchSession();
+  }, []);
+
+  const isAuthenticated = status;
+  console.log({session})
+  const isAdmin = session?.user?.role === "admin";
+
 
   return (
     <div>

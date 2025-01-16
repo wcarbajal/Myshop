@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -47,7 +47,7 @@ export const RegisterForm = () => {
         errors.name?.type === 'required' && (
           <span className="text-red-500">* El nombre es obligatorio</span>
         )
-      } */}
+      }
 
 
       <label htmlFor="email">Nombre completo</label>
@@ -100,7 +100,7 @@ export const RegisterForm = () => {
 
       <button className="btn-primary">Crear cuenta</button>
 
-      {/* divisor l ine */}
+      {/* divisor l ine 
       <div className="flex items-center my-5">
         <div className="flex-1 border-t border-gray-500"></div>
         <div className="px-2 text-gray-800">O</div>
@@ -113,3 +113,4 @@ export const RegisterForm = () => {
     </form>
   );
 };
+ */

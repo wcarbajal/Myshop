@@ -1,5 +1,5 @@
 import { titleFont } from '@/config/fonts';
-import { RegisterForm } from './ui/RegisterForm';
+import { RegisterForm2 } from './ui/RegisterForm2';
 
 export default function NewAccountPage() {
   return (
@@ -7,7 +7,7 @@ export default function NewAccountPage() {
 
       <h1 className={ `${ titleFont.className } text-4xl mb-5` }>Nueva cuenta</h1>
 
-      <RegisterForm />
+      <RegisterForm2 />
     </div>
   );
 }

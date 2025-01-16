@@ -1,4 +1,4 @@
-import NextAuth, { DefaultSession } from 'next-auth';
+/* import NextAuth, { DefaultSession } from 'next-auth';
 
 
 
@@ -9,11 +9,12 @@ declare module 'next-auth' {
       id: string;
       name: string;
       email: string;
-      emailVerified?: boolean;
       role: string;
+      emailVerified?: boolean;
+      roles: string;
       image?: string;
       telefono: string;
       
     } & DefaultSession['user'];
   }
-}
+} */
