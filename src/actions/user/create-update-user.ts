@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { v2 as cloudinary } from 'cloudinary';
 import { User } from '@/interfaces';
 import bcryptjs from 'bcryptjs';
+import Image from 'next/image';
 
 cloudinary.config( process.env.CLOUDINARY_URL ?? '' );
 
@@ -15,7 +16,8 @@ const userSchema = z.object( {
   name: z.string().min( 3 ).max( 255 ),
   email: z.string().email(),
   telefono: z.string().optional().nullable(),
-  password: z.string().optional().nullable(),
+  password: z.string(),
+  image: z.string().optional().nullable(),
   role: z.enum( [ 'admin', 'user' ] ),
   state: z.enum( [ 'activo', 'inactivo' ] ),
   createdAt: z.date().optional().nullable(),
@@ -44,13 +46,13 @@ export const createUpdateUser = async ( formData: FormData ) => {
   try {
     const prismaTx = await prisma.$transaction( async ( tx ) => {
 
-      let userNewUpdate: User;
+      
       let publicId: string = '';
 
 
       if ( id ) {
         // Actualizar
-        const userNewUpdate = await prisma.user.update( {
+        await prisma.user.update( {
           where: { id },
           data: {
             name: rest.name,
@@ -73,15 +75,19 @@ export const createUpdateUser = async ( formData: FormData ) => {
         }
 
         //Obtener imagen guardada
-        const imageUrl = userNewUpdate.image;
+        const imageUrl = await prisma.user.findUnique({
+          where: {
+            id
+          },
+          select: {
+            image: true
+          }
+        })
 
-        /*  const imageUrl = await prisma.user.findUnique( {
-           where: { id },
-           select: { image: true }
-         } ); */
+       
 
-        if ( imageUrl !== null ) {
-          publicId = imageUrl.split( '/' ).pop()?.split( '.' )[ 0 ] ?? '';
+        if ( typeof imageUrl?.image == 'string' ) {
+          publicId = imageUrl.image.split( '/' ).pop()?.split( '.' )[ 0 ] ?? '';
         }
 
 
@@ -89,13 +95,14 @@ export const createUpdateUser = async ( formData: FormData ) => {
       } 
       else {
         // Crear
+        const passwordNew = await bcryptjs.hashSync( rest.password, 10 );
 
-        const userNewUpdate = await prisma.user.create( {
+        await prisma.user.create( {
           data: {
             name: rest.name,
             email: rest.email,
             telefono: rest.telefono,
-            password: rest.password ?? '',
+            password: passwordNew,
             role: rest.role,
           }
 
