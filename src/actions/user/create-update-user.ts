@@ -47,18 +47,20 @@ export const createUpdateUser = async ( formData: FormData ) => {
     const prismaTx = await prisma.$transaction( async ( tx ) => {
 
       
+      let userNewUpdate;
       let publicId: string = '';
 
 
       if ( id ) {
         // Actualizar
-        await prisma.user.update( {
+        userNewUpdate = await prisma.user.update( {
           where: { id },
           data: {
             name: rest.name,
             email: rest.email,
             telefono: rest.telefono,
             role: rest.role,
+            state: rest.state
           }
         } );
         if ( rest.password === '' ) {
@@ -94,10 +96,10 @@ export const createUpdateUser = async ( formData: FormData ) => {
 
       } 
       else {
-        // Crear
+        // Crear password
         const passwordNew = await bcryptjs.hashSync( rest.password, 10 );
 
-        await prisma.user.create( {
+        userNewUpdate = await prisma.user.create( {
           data: {
             name: rest.name,
             email: rest.email,
@@ -125,7 +127,7 @@ export const createUpdateUser = async ( formData: FormData ) => {
 
         await prisma.user.update( {
           where: {
-            id: userNewUpdate.id,
+            id: userNewUpdate.id
           },
           data: {
             image: images[ 0 ],

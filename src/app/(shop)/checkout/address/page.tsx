@@ -16,7 +16,7 @@ export default async function AddressPage() {
     )
   }
 
-  const userAddress = await getUserAddress(session.user.id) ?? undefined;
+  const userAddress = await getUserAddress(session.user.id ?? '') ?? undefined;
   
 
 

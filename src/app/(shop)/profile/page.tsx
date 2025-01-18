@@ -26,7 +26,7 @@ export default async function ProfilePage() {
 
         <div className="flex justify-center mt-10">
           <Avatar style={ { width: '150px', height: '170px' } }>
-            <AvatarImage src={session?.user.image} />
+            <AvatarImage src={session.user.image ?? ''} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>

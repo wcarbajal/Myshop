@@ -1,4 +1,4 @@
-import { State } from '@prisma/client';
+import { Role, State } from '@prisma/client';
 
 export interface User {
   id: string;
@@ -6,11 +6,13 @@ export interface User {
     email: string;
     telefono: string | null;
     emailVerified: Date | null;
-    password: string;
-    role: string;
+    password: string | null;
+    role: Role;
     image: string | null;
-    state: 'activo' | 'inactivo' | null;
+    state: State | null;
     createdAt: Date | null;
     updatedAt: Date | null;
 }
+
+
 
