@@ -4,8 +4,12 @@ import prisma from '@/lib/prisma';
 
 
 
-export const getUserAddress = async( userId: string ) => {
+export const getUserAddress = async( userId?: string ) => {
   try {
+    
+    if (!userId ){
+      return null
+    }
 
     const address = await prisma.userAddress.findUnique({
       where: { userId }

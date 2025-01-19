@@ -2,7 +2,6 @@
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcryptjs from 'bcryptjs';
-import { z } from 'zod';
 import { loginSchema } from './lib/auth-schema';
 import prisma from './lib/prisma';
 import { nanoid } from "nanoid";
@@ -14,7 +13,7 @@ export default {
     Credentials( {
       authorize: async ( credentials ) => {
 
-        const { data, success, error } = loginSchema.safeParse( credentials );
+        const { data, success } = loginSchema.safeParse( credentials );
 
         if ( !success ) {
           throw new Error( "Credenciales incorrectas" );

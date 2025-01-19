@@ -1,17 +1,25 @@
-'use client'
-import { signOut } from 'next-auth/react';
-import { Button } from '../ui/button';
+'use client';
+
+import { logout } from '@/actions';
+import {
+
+  IoLogOutOutline,
+
+} from "react-icons/io5";
+
 
 export const Logout = () => {
 
   const handleLogout = async () => {
-   await  signOut({
-     callbackUrl: '/auth/login',
-   });
-    
-  }
+    await logout();
+
+  };
 
   return (
-    <Button variant='outline' onClick={handleLogout}>Salir</Button>
-  )
-}
+    <button onClick={ handleLogout } className="flex w-full items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all">
+
+      <IoLogOutOutline size={ 30 } />
+      <span className="ml-3 text-xl">Salir</span>
+    </button>
+  );
+};

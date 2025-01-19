@@ -3,9 +3,15 @@
 import type { Address } from "@/interfaces";
 import prisma from "@/lib/prisma";
 
-export const setUserAddress = async (address: Address, userId: string) => {
+export const setUserAddress = async (address: Address, userId: string | undefined) => {
   try {
 
+    if(!userId){
+      return {
+        ok: false,
+        message: "No se especificó el userId",
+      }
+    }
     const newAddress = await createOrReplaceAddress( address, userId );
 
     return {

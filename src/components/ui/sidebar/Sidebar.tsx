@@ -16,8 +16,9 @@ import {
 
 import { useUIStore } from "@/store";
 import { logout, retornarSession } from "@/actions";
-import { auth } from '@/auth';
+import { signOut } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import { Logout } from '@/components/logout/Logout';
 
 export const Sidebar = () => {
   const isSideMenuOpen = useUIStore((state) => state.isSideMenuOpen);
@@ -42,6 +43,13 @@ export const Sidebar = () => {
   const isAuthenticated = status;
   
   const isAdmin = session?.user?.role === "admin";
+
+   const handleLogout = async () => {
+     await  signOut({
+       callbackUrl: '/auth/login',
+     });
+      
+    }
 
 
   return (
@@ -111,13 +119,8 @@ export const Sidebar = () => {
         )}
 
         {isAuthenticated && (
-          <button
-            className="flex w-full items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
-            onClick={() => logout()}
-          >
-            <IoLogOutOutline size={30} />
-            <span className="ml-3 text-xl">Salir</span>
-          </button>
+
+          <Logout />
         )}
 
         {!isAuthenticated && (

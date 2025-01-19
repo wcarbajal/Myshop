@@ -15,7 +15,9 @@ export const placeOrder = async (
   address: Address
 ) => {
   const session = await auth();
+  console.log('las session seria:  ' + JSON.stringify(session))
   const userId = session?.user.id;
+  console.log('userId es el siguiente: ' + userId);
 
   // Verificar sesión de usuario
   if (!userId) {

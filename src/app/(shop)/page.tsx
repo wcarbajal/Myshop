@@ -5,8 +5,11 @@ import { redirect } from 'next/navigation';
 
 import { getPaginatedProductsWithImages } from '@/actions';
 import { Pagination, ProductGrid, Title } from '@/components';
-import { auth, signOut } from '@/auth';
+
 import { Logout } from '@/components/logout/Logout';
+import { auth } from '@/auth';
+
+
 
 
 
@@ -18,7 +21,10 @@ interface Props {
 
 
 export default async function Home( { searchParams }: Props ) {
+  
   const session = await auth()
+
+  console.log({session})
 
   
 
@@ -48,15 +54,6 @@ export default async function Home( { searchParams }: Props ) {
           )
 
       }
-<div>
-  <pre>
-    {
-      JSON.stringify( session, null, 2 )
-    }
-  </pre>
-  <Logout />
-  
-</div>
 
 
        <Pagination totalPages={ totalPages } /> 

@@ -19,6 +19,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth( {
      
       if ( user ) { // User is available during sign-in
         token.role = user.role;
+        token.id = user.id ;
       }
       return token;
     },
@@ -30,7 +31,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth( {
       
       if (session.user) {
         
-          session.user.role = token.role 
+          session.user.role = token.role
+          session.user.id = token.id ?? '';
         
       }
 
