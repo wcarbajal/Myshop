@@ -12,6 +12,7 @@ export default {
   providers: [
     Credentials( {
       authorize: async ( credentials ) => {
+        console.log('Inicion del credentials')
 
         const { data, success } = loginSchema.safeParse( credentials );
 
@@ -34,36 +35,38 @@ export default {
         // verificacion del email
         if ( !user.emailVerified ) {
 
-          const verifiTokenExists = await prisma.verificationToken.findFirst({
+          const verifiTokenExists = await prisma.verificationToken.findFirst( {
             where: {
               identifier: user.email,
             },
-          })
+          } );
+          console.log( {verifiTokenExists})
 
-          if(verifiTokenExists?.identifier){
-            await prisma.verificationToken.delete({
+          if ( verifiTokenExists?.identifier ) {
+            await prisma.verificationToken.delete( {
               where: {
                 identifier: user.email,
               },
-            })         
+            } );
 
           }
 
-          const token = nanoid()
+          const token = nanoid();
 
-          await prisma.verificationToken.create({
+         const formail =  await prisma.verificationToken.create( {
             data: {
               identifier: user.email,
               token,
-              expiresAt: new Date(Date.now() + 1000*60*60*24), // 24 hour
+              expiresAt: new Date( Date.now() + 1000 * 60 * 60 * 24 ), // 24 hour
             },
-          })
+          } );
 
-
+          console.log( { formail } );
           // enviar email de verificacion
-          await sendEmailVerification(user.email, token)
+          const resultado = await sendEmailVerification( formail.identifier, token );
+          console.log( { resultado } );
 
-          throw new Error('Pendiente de verificar e-mail desde su correo')
+          throw new Error( 'Pendiente de verificar e-mail desde su correo' );
 
 
 
