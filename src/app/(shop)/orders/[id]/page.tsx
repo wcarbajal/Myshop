@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getOrderById } from "@/actions/order/get-order-by-id";
 import { currencyFormat } from "@/utils";
 import { OrderStatus, PayPalButton, Title } from "@/components";
+import { ButtonPay } from '@/components/pasarela/ButtonPay';
 
 interface Props {
   params: {
@@ -112,7 +113,8 @@ export default async function OrdersByIdPage({ params }: Props) {
               {order?.isPaid ? (
                 <OrderStatus isPaid={order?.isPaid ?? false} />
               ) : (
-                <PayPalButton amount={order!.total} orderId={order!.id} />
+                
+                <ButtonPay orderId={ '' } amount={ 0 } />
               )}
             </div>
           </div>

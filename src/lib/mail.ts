@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 
 
-const resend = new Resend(process.env.AUTH_RESEND_KEY);
+const resend = new Resend("re_UNY4Xho5_89GxLzCQaD5s9sfrRsiQnMzQ");
 
 export const sendEmailVerification = async(email: string, token: string) => {
  
@@ -15,7 +15,7 @@ export const sendEmailVerification = async(email: string, token: string) => {
       <h2>Activación de usuario en la plataforma </h2>
       
       <p>De click en el siguiente enlace par verificar tu email</p>
-      <a href="${process.env.NEXTAUTH_URL}/api/auth/verify-email?token=${token}">Verificar email</a>
+      <a href="http://localhost:3000/api/auth/verify-email?token=${token}">Verificar email</a>
 
       `
     });

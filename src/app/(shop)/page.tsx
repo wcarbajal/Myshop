@@ -3,12 +3,12 @@ export const revalidate = 60; // 60 segundos
 
 import { redirect } from 'next/navigation';
 
-import { getPaginatedProductsWithImages } from '@/actions';
+
 import { Pagination, ProductGrid, Title } from '@/components';
 
 import { Logout } from '@/components/logout/Logout';
 import { auth } from '@/auth';
-
+import { getPaginatedProductsWithImages } from '@/actions';
 
 
 
@@ -22,20 +22,14 @@ interface Props {
 
 export default async function Home( { searchParams }: Props ) {
   
-  const session = await auth()
-
-  console.log({session})
-
-  
+  //const session = await auth()
 
   const page = searchParams.page ? parseInt( searchParams.page ) : 1;
 
-  const { products, currentPage, totalPages } = await getPaginatedProductsWithImages( { page } );
+  const result = await getPaginatedProductsWithImages( { page } );
   
-  if ( products.length === 0 ) {
-    redirect( '/' );
-  } 
 
+  const { products, totalPages } = result;
 
   return (
     <>
@@ -45,19 +39,16 @@ export default async function Home( { searchParams }: Props ) {
         className="mb-2"
       />
 
-       {
+      {
         (products.length === 0 )
-          ? ( <span>No hay productos disponibles.</span> )
+          ? ( <span className="">No hay productos disponibles.</span> )
           : ( <ProductGrid
             products={ products }
           />
           )
-
       }
 
-
-       <Pagination totalPages={ totalPages } /> 
-
+      <Pagination totalPages={ totalPages } /> 
     </>
   );
 }

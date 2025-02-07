@@ -10,7 +10,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth( {
   ...authConfig,
   session: {
     strategy: "jwt",
-    maxAge: 300
+    maxAge: 300 // 60*60 
   },
   callbacks: {
     // jwt() se ejecuta cada vez que se crea o actualizar un token JWT

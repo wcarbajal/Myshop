@@ -9,7 +9,7 @@ const publicRoutes = [
   "/login",
   "/api/auth/verify-mail",
   "/auth/login",
-  "api/auth/signin"
+  "/api/auth/signin"
 ]
 export default  middleware((req) =>{
   const { nextUrl, auth } = req;

@@ -1,17 +1,30 @@
-import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
+'use client'
+import { auth } from '../../../auth';
+import { useRouter } from 'next/navigation';
+;
+import { useEffect } from 'react';
 
-export default async function CheckoutLayout({children}: {
+export default function CheckoutLayout({children}: {
  children: React.ReactNode;
 }) {
 
-  const session = await auth();
+  const router = useRouter();
 
-  if (!session?.user) {
-    // redirect('/auth/login?returnTo=/perfil');
-    redirect("/auth/login?redirectTo=/checkout/address");
-  }
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const session = await auth();
+        if (!session?.user) {
+          router.replace('/auth/login');
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+        //router.replace('/auth/login');
+      }
+    };
 
+    checkSession();
+  }, [router]);
   
   return (
     <>
