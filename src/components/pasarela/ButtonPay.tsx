@@ -5,6 +5,17 @@ import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { CreateOrderData, CreateOrderActions, OnApproveActions, OnApproveData } from '@paypal/paypal-js';
 import { paypalCheckPayment, setTransactionId } from '@/actions';
 
+const checkout = new Izipay({config: iziConfig});
+
+const iziConfig = {
+ config: {
+   render: {
+      typeForm: 'pop-up'
+   },   
+ }
+};
+
+
 interface Props {
   orderId: string;
   amount: number;
@@ -14,59 +25,26 @@ interface Props {
 
 export const ButtonPay = ({ orderId, amount }: Props) => {
 
-  /*  const [{ isPending }] = usePayPalScriptReducer();
+  const callbackResponsePayment = (response) => console.log(response);
 
-  const rountedAmount = (Math.round(amount * 100)) / 100; //123.23
-
-
-  if ( isPending ) {
-    return (
-      <div className="animate-pulse mb-16">
-        <div className="h-11 bg-gray-300 rounded" />
-        <div className="h-11 bg-gray-300 rounded mt-2" />
-      </div>
-    )
-  }
-
-
-  const createOrder = async(data: CreateOrderData, actions: CreateOrderActions): Promise<string> => {
-
-    const transactionId = await actions.order.create({
-      purchase_units: [
-        {
-          invoice_id: orderId,
-          amount: {
-            value: `${ rountedAmount }`,
-          }
-
-        }
-      ]
+try {
+  checkout &&
+    checkout.LoadForm({
+      authorization: 'TU_TOKEN_SESSION',
+      keyRSA: '69223723:testpublickey_vVmOc94UuRI8a7zBpuYKYJUnXM5haOjVijE2x3PuE1iNf',
+      callbackResponse: callbackResponsePayment
     });
-
-    const { ok } = await setTransactionId( orderId, transactionId );
-    if ( !ok ) {
-      throw new Error('No se pudo actualizar la orden');
-    }
-
-    return transactionId;
-  }
-
- const onApprove = async(data: OnApproveData, actions: OnApproveActions) => {
-    
-    const details = await actions.order?.capture();
-    if ( !details ) return;
-
-    await paypalCheckPayment( details.id );
-
-  }
- */
+} catch (error) {
+  console.log(error.message, error.Errors, error.date);
+}
 
 
 
   return (
-    <div className="relative z-0">
-      <span>Aqui boton de pago</span>
-       
-    </div>
+   render (
+    <Izipay
+      config={config}
+    />
+  )
   )
 }
