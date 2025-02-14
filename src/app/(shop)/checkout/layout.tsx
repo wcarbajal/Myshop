@@ -1,31 +1,22 @@
-'use client'
-import { auth } from '../../../auth';
-import { useRouter } from 'next/navigation';
-;
-import { useEffect } from 'react';
+import { auth } from '@/auth';
+import { redirect } from 'next/navigation';
 
-export default function CheckoutLayout({children}: {
+
+
+
+export default async function CheckoutLayout({children}: {
  children: React.ReactNode;
 }) {
 
-  const router = useRouter();
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const session = await auth();
-        if (!session?.user) {
-          router.replace('/auth/login');
-        }
-      } catch (error) {
-        console.error('Error checking session:', error);
-        //router.replace('/auth/login');
-      }
-    };
-
-    checkSession();
-  }, [router]);
+  const session = await auth();   
   
+
+   if ( !session?.user ) {
+      
+      redirect('/api/auth/signin');
+    }
+
+
   return (
     <>
     { children }

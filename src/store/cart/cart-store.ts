@@ -38,8 +38,8 @@ export const useCartStore = create<State>()(
           (total, product) => product.quantity * product.price + total,
           0
         );
-       const subTotal = total * 0.82; // descuento del 10%
         const tax = total * 0.18;
+       const subTotal = total - tax; // descuento del 10%
         //const total = subTotal + tax;
         const itemsInCart = cart.reduce(
           (total, item) => total + item.quantity,

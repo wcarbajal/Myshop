@@ -40,7 +40,7 @@ export const OrderSummary = () => {
       </span>
 
       <span>Subtotal</span>
-      <span className="text-right">{currencyFormat(subTotal*0.82)}</span>
+      <span className="text-right">{currencyFormat(subTotal)}</span>
 
       <span>Impuestos (18%)</span>
       <span className="text-right">{currencyFormat(tax)}</span>

@@ -3,8 +3,8 @@ import Image from "next/image";
 
 import { getOrderById } from "@/actions/order/get-order-by-id";
 import { currencyFormat } from "@/utils";
-import { OrderStatus, PayPalButton, Title } from "@/components";
-import { ButtonPay } from '@/components/pasarela/ButtonPay';
+import { ButtonPay, OrderStatus,  Title } from "@/components";
+
 
 interface Props {
   params: {
@@ -30,7 +30,8 @@ export default async function OrdersByIdPage({ params }: Props) {
       <div className="flex flex-col w-[1000px]">
         <Title title={`Orden #${id.split("-").at(-1)}`} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
+          
           {/* Carrito */}
           <div className="flex flex-col mt-5">
             <OrderStatus isPaid={order?.isPaid ?? false} />
@@ -113,10 +114,13 @@ export default async function OrdersByIdPage({ params }: Props) {
               {order?.isPaid ? (
                 <OrderStatus isPaid={order?.isPaid ?? false} />
               ) : (
-                
-                <ButtonPay orderId={ '' } amount={ 0 } />
+                <span></span>
+                //<ButtonPay orderId={ id } amount={ order!.total } email={ 'wcarbajal@outlook.com' } />
               )}
             </div>
+          </div>
+          <div>
+            <ButtonPay orderId={ '' } amount={500 } email={ 'wcarbajal@outlook.com' } />
           </div>
         </div>
       </div>

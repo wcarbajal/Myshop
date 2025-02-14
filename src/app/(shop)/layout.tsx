@@ -6,7 +6,7 @@ export default async function ShopLayout( { children }: {
 } ) {
 
   const categorias = await getCategories();
-  console.log({categorias})
+  //console.log({categorias})
   return (
     <main className="min-h-screen">
 

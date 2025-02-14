@@ -11,10 +11,10 @@ export default async function AddressPage() {
 
   const session = await auth();
 
-  console.log( { session } );
+  
 
   if ( !session?.user ) {
-    redirect( '/auth/login' );
+    redirect( '/api/auth/signin' );
   }
 
 const userAddress = await getUserAddress(session.user.id) ?? undefined;

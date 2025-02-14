@@ -1,6 +1,7 @@
 export * from './brand/BrandDeleteButton';
 export * from './logout/Logout';
 export * from './orders/OrderStatus';
+export * from './pasarela/ButtonPay';
 export * from './paypal/PayPalButton';
 export * from './product/product-image/ViewImage';
 export * from './product/quantity-selector/QuantitySelector';
@@ -12,7 +13,6 @@ export * from './products/product-delete-button/DeleteButton';
 export * from './products/product-grid/ProductGrid';
 export * from './products/product-grid/ProductGridItem';
 export * from './providers/Providers';
-//export * from './sign-in';
 export * from './ui/alert-dialog';
 export * from './ui/avatar';
 export * from './ui/button';

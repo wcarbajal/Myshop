@@ -125,7 +125,7 @@ export const Sidebar = () => {
 
         {!isAuthenticated && (
           <Link
-            href="/auth/login"
+            href="/api/auth/signin"
             className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
             onClick={() => closeMenu()}
           >

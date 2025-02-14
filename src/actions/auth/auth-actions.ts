@@ -6,6 +6,7 @@ import prisma from '@/lib/prisma';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
+import { redirect } from 'next/navigation';
 
 
 export const loginAction = async (
@@ -16,7 +17,9 @@ export const loginAction = async (
 
     await signIn( 'credentials', {
       email: values.email,
-      password: values.password,       
+      password: values.password,      
+      redirect: false,
+      
       
     } );
     return {success: true};
