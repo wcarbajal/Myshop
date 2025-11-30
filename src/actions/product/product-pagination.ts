@@ -6,22 +6,22 @@ import { Gender } from "@prisma/client";
 interface PaginationOptions {
   page?: number;
   take?: number;
-  
+  gender?: Gender;
 }
 
-export const getPaginatedProductsWithImages = async ({
+export const getPaginatedProductsWithImages = async ( {
   page = 1,
   take = 12,
- 
-}: PaginationOptions) => {
-  if (isNaN(Number(page))) page = 1;
-  if (page < 1) page = 1;
+  gender,
+}: PaginationOptions ) => {
+  if ( isNaN( Number( page ) ) ) page = 1;
+  if ( page < 1 ) page = 1;
 
   try {
     // 1. Obtener los productos
-    const products = await prisma.product.findMany({
+    const products = await prisma.product.findMany( {
       take: take,
-      skip: (page - 1) * take,
+      skip: ( page - 1 ) * take,
       include: {
         ProductImage: {
           take: 2,
@@ -31,27 +31,29 @@ export const getPaginatedProductsWithImages = async ({
         },
         brand: true
       },
-      
-    });
-    if (!products) {
+      where: gender ? { gender } : undefined,
+    } );
+    if ( !products ) {
       return { currentPage: 1, totalPages: 0, products: [] };
     }
 
     // 2. Obtener el total de páginas
-    const totalCount = await prisma.product.count();
-    
-    const totalPages = Math.ceil(totalCount / take);
+    const totalCount = await prisma.product.count( {
+      where: gender ? { gender } : undefined,
+    } );
+
+    const totalPages = Math.ceil( totalCount / take );
 
     return {
       currentPage: page,
       totalPages: totalPages,
-      products: products.map((product) => ({
+      products: products.map( ( product ) => ( {
         ...product,
-        images: product.ProductImage.map((image) => image.url),
-      })),
+        images: product.ProductImage.map( ( image ) => image.url ),
+      } ) ),
     };
-  } catch (error) {
-    console.log(error);
+  } catch ( error ) {
+    console.log( error );
     return { currentPage: 1, totalPages: 0, products: [] };
   }
 };
