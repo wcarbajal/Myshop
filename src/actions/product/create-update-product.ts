@@ -27,7 +27,8 @@ cloudinary.config( process.env.CLOUDINARY_URL ?? '' );
 
 const productSchema = z.object( {
   id: z.string().uuid().optional().nullable(),
-  codigoean13: z.string().optional().nullable(),  
+  codigoean13: z.string().optional().nullable(),
+  apiImageUrls: z.string().optional().nullable(),
   title: z.string().min( 3 ).max( 255 ),
   slug: z.string().min( 3 ).max( 255 ),
   description: z.string(),
@@ -78,15 +79,25 @@ export const createUpdateProduct = async ( formData: FormData ) => {
   }
 
   const product = productParsed.data;
-  const codigo= product.codigoean13 ?? 'xxxxxxxxxxxxx';
+  const codigo = product.codigoean13 ?? 'xxxxxxxxxxxxx';
 
   product.slug = product.slug.toLowerCase().replace( / /g, '-' ).trim();
 
 
 
 
-  const { id, codigoean13,...rest } = product;
+  const { id, codigoean13, apiImageUrls, ...rest } = product;
 
+  // Parsear las URLs de imágenes de API si existen
+  let imageUrlsFromApi: string[] = [];
+  if ( apiImageUrls ) {
+    try {
+      imageUrlsFromApi = JSON.parse( apiImageUrls );
+      console.log( `📥 URLs de imágenes recibidas: ${ imageUrlsFromApi.length }` );
+    } catch ( error ) {
+      console.error( 'Error al parsear apiImageUrls:', error );
+    }
+  }
 
   try {
     const prismaTx = await prisma.$transaction( async ( tx ) => {
@@ -144,20 +155,32 @@ export const createUpdateProduct = async ( formData: FormData ) => {
       }
       // Proceso de carga y guardado de imagenes
       // Recorrer las imagenes y guardarlas
-      if ( formData.getAll( 'images' ) ) {
-        // [https://url.jpg, https://url.jpg]
+      const allImageUrls: string[] = [];
+
+      // 1. Subir archivos de imágenes locales
+      if ( formData.getAll( 'images' ).length > 0 ) {
         const images = await uploadImages( formData.getAll( 'images' ) as File[] );
         if ( !images ) {
           throw new Error( 'No se pudo cargar las imágenes, rollingback' );
         }
+        allImageUrls.push( ...images.filter( img => img !== null ) as string[] );
+      }
 
+      // 2. Agregar URLs de imágenes de API
+      if ( imageUrlsFromApi.length > 0 ) {
+        console.log( `🌐 Guardando ${ imageUrlsFromApi.length } URLs de imágenes de API` );
+        allImageUrls.push( ...imageUrlsFromApi );
+      }
+
+      // 3. Guardar todas las URLs en la base de datos
+      if ( allImageUrls.length > 0 ) {
         await prisma.productImage.createMany( {
-          data: images.map( image => ( {
-            url: image!,
+          data: allImageUrls.map( url => ( {
+            url: url,
             productId: product.id,
           } ) )
         } );
-
+        console.log( `✅ Total de imágenes guardadas: ${ allImageUrls.length }` );
       }
 
       return {
@@ -180,12 +203,12 @@ export const createUpdateProduct = async ( formData: FormData ) => {
 
   } catch ( error ) {
 
-    console.log(error)
+    console.log( error );
 
     return {
       ok: false,
-      message: 'Revisar los logs, no se pudo actualizar/crear', 
-      
+      message: 'Revisar los logs, no se pudo actualizar/crear',
+
     };
   }
 
@@ -206,13 +229,13 @@ const uploadImages = async ( images: File[] ) => {
 
         return cloudinary.uploader.upload( `data:image/png;base64,${ base64Image }`, {
           folder: 'products',
-          
+
         } )
           .then( r => r.secure_url );
 
-       
-          
-        
+
+
+
 
       } catch ( error ) {
         console.log( error );

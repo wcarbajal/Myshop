@@ -4,13 +4,14 @@ import { useForm } from "react-hook-form";
 import { Category, Product, ProductImage as ProductWithImage } from "@/interfaces";
 
 import clsx from "clsx";
-import { createUpdateProduct, deleteProductImage } from "@/actions";
+import { createUpdateProduct, deleteProductImage, fetchProductByBarcode } from "@/actions";
 import { useRouter } from 'next/navigation';
-import { ViewImage } from '@/components';
+import { ViewImage, BarcodeScanner } from '@/components';
 import { Brands, Measure } from '@prisma/client';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Modal } from './Modal';
+
 
 interface Props {
   productIn: Partial<Product> & { ProductImage?: ProductWithImage[]; };
@@ -45,6 +46,8 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
 
 
   const [ isModalOpen, setIsModalOpen ] = useState( false );
+  const [ showScanner, setShowScanner ] = useState( false );
+  const [ apiImageUrls, setApiImageUrls ] = useState<string[]>( [] );
 
   const openModal = () => { setIsModalOpen( true ); };
   const closeModal = () => { setIsModalOpen( false ); };
@@ -84,6 +87,136 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
     setValue( "sizes", Array.from( sizes ) );
   }; */
 
+  const handleProductFound = async ( productData: any ) => {
+    // Llenar automáticamente los campos del formulario con la información encontrada
+    if ( productData.found ) {
+      // Código de barras
+      setValue( 'codigoean13', productData.barcode );
+
+      // Título del producto
+      if ( productData.name ) {
+        setValue( 'title', productData.name );
+        // Generar slug automáticamente
+        const slug = productData.name
+          .toLowerCase()
+          .replace( /[^a-z0-9]+/g, '-' )
+          .replace( /(^-|-$)/g, '' );
+        setValue( 'slug', slug );
+      }
+
+      // Descripción
+      if ( productData.description ) {
+        setValue( 'description', productData.description );
+      }
+
+      // Cantidad/Medida
+      if ( productData.quantity ) {
+        setValue( 'descriptionMeasure', productData.quantity );
+      }
+
+      // Marca - Buscar o crear automáticamente
+      if ( productData.brand ) {
+        // Buscar la marca en la lista de brands
+        const foundBrand = brands.find( b =>
+          b.name.toLowerCase().includes( productData.brand.toLowerCase() ) ||
+          productData.brand.toLowerCase().includes( b.name.toLowerCase() )
+        );
+
+        if ( foundBrand ) {
+          setValue( 'brandId', foundBrand.id );
+        } else {
+          // Si no existe, preguntar si desea crear la marca
+          const shouldCreate = window.confirm(
+            `🏷️ La marca "${ productData.brand }" no existe en la lista.\n\n¿Deseas crearla automáticamente?`
+          );
+
+          if ( shouldCreate ) {
+            try {
+              const { findOrCreateBrand } = await import( '@/actions' );
+              const result = await findOrCreateBrand( productData.brand );
+
+              if ( result.ok && result.brandId ) {
+                setValue( 'brandId', result.brandId );
+                alert( `✅ ${ result.message }` );
+
+                // Recargar la página para actualizar la lista de marcas
+                window.location.reload();
+              } else {
+                alert( `❌ Error al crear la marca: ${ result.message }` );
+              }
+            } catch ( error ) {
+              console.error( 'Error al crear marca:', error );
+              alert( '❌ Error al crear la marca. Por favor, créala manualmente.' );
+            }
+          }
+        }
+      }
+
+      // Categoría
+      if ( productData.category ) {
+        const foundCategory = categories.find( c =>
+          c.name.toLowerCase().includes( productData.category.toLowerCase() ) ||
+          productData.category.toLowerCase().includes( c.name.toLowerCase() )
+        );
+        if ( foundCategory ) {
+          setValue( 'categoryId', foundCategory.id );
+        }
+      }
+
+      // Precio (si está disponible)
+      if ( productData.price ) {
+        setValue( 'price', productData.price );
+      }
+
+      // Guardar las URLs de imágenes de la API
+      if ( productData.images && productData.images.length > 0 ) {
+        setApiImageUrls( productData.images );
+        console.log( `📸 Imágenes guardadas desde API: ${ productData.images.length }` );
+      }
+
+      alert( `✅ Producto encontrado: ${ productData.name }\nFuente: ${ productData.source }\nImágenes: ${ productData.images?.length || 0 }\n\nRevisa y completa la información restante.` );
+    } else {
+      // Solo llenar el código de barras
+      setValue( 'codigoean13', productData.barcode );
+      alert( `ℹ️ Código escaneado: ${ productData.barcode }\n\nNo se encontró información automática.\nPor favor, completa los datos manualmente.` );
+    }
+
+    setShowScanner( false );
+  };
+
+  const handleSearchBarcode = async () => {
+    const barcode = getValues( 'codigoean13' );
+
+    // Validar que haya un código ingresado
+    if ( !barcode || barcode.trim() === '' ) {
+      alert( '⚠️ Por favor, ingresa un código de barras primero.' );
+      return;
+    }
+
+    // Validar formato básico (8 a 13 dígitos)
+    if ( !/^[0-9]{8,13}$/.test( barcode ) ) {
+      alert( '⚠️ El código debe tener entre 8 y 13 dígitos numéricos.' );
+      return;
+    }
+
+    // Mostrar confirmación
+    const confirmSearch = window.confirm( `🔍 ¿Buscar información para el código: ${ barcode }?` );
+    if ( !confirmSearch ) return;
+
+    try {
+
+
+      const productData = await fetchProductByBarcode( barcode ); /* Lo que estoy revisando */
+      console.log( 'Producto encontrado:', productData );
+
+      // Usar la misma función de manejo que el escáner
+      handleProductFound( productData );
+    } catch ( error ) {
+      console.error( 'Error al buscar producto:', error );
+      alert( '❌ Error al buscar el producto. Intenta nuevamente.' );
+    }
+  };
+
   const onSubmit = async ( data: FormInputs ) => {
     const formData = new FormData();
 
@@ -98,7 +231,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
     formData.append( "slug", productToSave.slug );
     formData.append( "description", productToSave.description );
     formData.append( "price", productToSave.price.toString() );
-    formData.append( "inStock", productToSave.inStock.toString() );    
+    formData.append( "inStock", productToSave.inStock.toString() );
     formData.append( "tags", productToSave.tags );
     formData.append( "categoryId", productToSave.categoryId );
     formData.append( "gender", productToSave.gender ?? 'unisex' );
@@ -106,18 +239,22 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
     formData.append( "descriptionMeasure", productToSave.descriptionMeasure );
     formData.append( "measure", productToSave.measure );
 
+
     if ( images ) {
       for ( let i = 0; i < images.length; i++ ) {
         formData.append( 'images', images[ i ] );
       }
     }
 
-
+    // Agregar las URLs de imágenes de la API
+    if ( apiImageUrls.length > 0 ) {
+      formData.append( 'apiImageUrls', JSON.stringify( apiImageUrls ) );
+    }
 
     const { ok, product } = await createUpdateProduct( formData );
 
     if ( !ok ) {
-      
+
       alert( 'Producto no se pudo actualizar' );
       return;
     }
@@ -139,7 +276,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
           <span>Código de barras</span>
           <div className="flex gap-2">
             <input
-            
+
               type="text"
               className="p-2 border rounded-md bg-gray-200 w-full"
               { ...register( "codigoean13", {
@@ -153,15 +290,34 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
                 }
 
               } ) }
-              tabIndex={1} 
+              tabIndex={ 1 }
             />
-            <button tabIndex={2}  className="btn-primary" onClick={ openModal } type='button'>Escanear</button>
+            <button
+              tabIndex={ 3 }
+              className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all whitespace-nowrap"
+              onClick={ handleSearchBarcode }
+              type='button'
+            >
+              🔍 Buscar
+            </button>
+            <button
+              tabIndex={ 2 }
+              className="btn-primary whitespace-nowrap"
+              onClick={ () => setShowScanner( true ) }
+              type='button'
+            >
+              📷 Escanear
+            </button>
 
-            <Modal isOpen={ isModalOpen } onClose={ closeModal }>
-              <h2>Hello, Im a Modal</h2>
-              <p>This is a simple modal example without using react-modal.</p>
-            </Modal>
           </div>
+
+          {/* Escáner de Código de Barras */ }
+          { showScanner && (
+            <BarcodeScanner
+              onProductFound={ handleProductFound }
+              onClose={ () => setShowScanner( false ) }
+            />
+          ) }
         </div>
         {
           errors.codigoean13 && (
@@ -171,7 +327,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         <div className="flex flex-col mb-2">
           <span>Título</span>
           <input
-          tabIndex={4}
+            tabIndex={ 4 }
             type="text"
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "title", {
@@ -199,7 +355,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         <div className="flex flex-col mb-2">
           <span>Slug</span>
           <input
-          tabIndex={6}
+            tabIndex={ 6 }
             type="text"
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "slug", {
@@ -229,7 +385,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         <div className="flex flex-col mb-2">
           <span>Descripción</span>
           <textarea
-          tabIndex={7}
+            tabIndex={ 7 }
             rows={ 5 }
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "description", { required: true } ) }
@@ -239,7 +395,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         <div className="flex flex-col mb-2">
           <span>Marca</span>
           <select
-          tabIndex={8}
+            tabIndex={ 8 }
 
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "brandId", { required: true } ) }
@@ -260,7 +416,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         <div className="flex flex-col mb-2">
           <span>Medida</span>
           <select
-          tabIndex={9}
+            tabIndex={ 9 }
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "measure", { required: true } ) }
 
@@ -288,7 +444,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         <div className="flex flex-col mb-2">
           <span>Detalle de medida</span>
           <input
-          tabIndex={10}
+            tabIndex={ 10 }
             type="text"
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "descriptionMeasure", { required: true } ) }
@@ -299,7 +455,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         <div className="flex flex-col mb-2">
           <span>Tags</span>
           <input
-          tabIndex={11}
+            tabIndex={ 11 }
             type="text"
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "tags", { required: true } ) }
@@ -322,15 +478,15 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
 
 
 
-        <button tabIndex={14} className="btn-primary w-full focus:font-bold focus:text-md">Guardar</button>
+        <button tabIndex={ 14 } className="btn-primary w-full focus:font-bold focus:text-md">Guardar</button>
       </div>
 
       {/* Selector de tallas y fotos */ }
       <div className="w-full">
-      <div className="flex flex-col mb-2">
+        <div className="flex flex-col mb-2">
           <span>Categoria</span>
           <select
-          tabIndex={3} 
+            tabIndex={ 3 }
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "categoryId", { required: true } ) }
           >
@@ -345,7 +501,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         <div className="flex flex-col mb-2">
           <span>Price</span>
           <input
-          tabIndex={5} 
+            tabIndex={ 5 }
 
             type="number"
             min="0" step="0.10"
@@ -357,7 +513,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         <div className="flex flex-col mb-2">
           <span>Inventario</span>
           <input
-          tabIndex={7}
+            tabIndex={ 7 }
             type="number"
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "inStock", { required: true, min: 0 } ) }
@@ -388,7 +544,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
           <div className="flex flex-col mb-2">
             <span>Fotos</span>
             <input
-            tabIndex={13}
+              tabIndex={ 13 }
               type="file"
               { ...register( 'images' ) }
               multiple
@@ -408,7 +564,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
                   className="rounded-t shadow-md"
                 />
 
-                <button                
+                <button
                   type="button"
                   onClick={ () => deleteProductImage( image.id, image.url ) }
                   className="btn-danger w-full rounded-b-xl"

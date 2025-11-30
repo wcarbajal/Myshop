@@ -16,39 +16,69 @@ interface Props {
 export const ProductGridItem = ( { product }: Props ) => {
 
   const [ displayImage, setDisplayImage ] = useState( product.images[ 0 ] );
-  
+  const [ isHovered, setIsHovered ] = useState( false );
+
 
   return (
-    <div className="rounded-md overflow-hidden fade-in border border-gray-200 h-fit shadow-lg">
-      
-      <Link  className="" href={ `/product/${ product.slug }` }>
-        <Image
-          src={ displayImage  } //TODO: update to fetch images from API
-          alt={ product.title }
-          className="w-full h-2/5 object-cover rounded "
-          width={  500 }
-          height={ 500 }
-          priority
-          onMouseEnter={ () => setDisplayImage( product.images[1] )  }
-          onMouseLeave={ () => setDisplayImage( product.images[0] ) }
-        />
+    <div
+      className="rounded overflow-hidden fade-in bg-white border border-gray-200 hover:border-myshop-orange hover:shadow-lg transition-all duration-300 h-fit group"
+      onMouseEnter={ () => setIsHovered( true ) }
+      onMouseLeave={ () => setIsHovered( false ) }
+    >
+
+      <Link className="relative block overflow-hidden" href={ `/product/${ product.slug }` }>
+        <div className="relative bg-white p-4">
+          <Image
+            src={ displayImage }
+            alt={ product.title }
+            className={ `w-full object-contain transition-transform duration-300 ${ isHovered ? 'scale-105' : 'scale-100' }` }
+            width={ 500 }
+            height={ 500 }
+            priority
+            onMouseEnter={ () => setDisplayImage( product.images[ 1 ] ) }
+            onMouseLeave={ () => setDisplayImage( product.images[ 0 ] ) }
+          />
+        </div>
       </Link>
 
-      <div className="p-4 flex flex-col gap-y-2 bg-slate-100">
-        <span className="text-red-500 text-sm">{product.brand?.name}</span>
+      <div className="p-4 flex flex-col gap-y-2 border-t border-gray-100">
+        {/* Marca */ }
+        { product.brand?.name && (
+          <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">
+            { product.brand.name }
+          </span>
+        ) }
+
+        {/* Título del producto */ }
         <Link
-          className="hover:text-blue-600 font-bold line-clamp-3"
-          href={ `/product/${ product.slug }` }>
-          { product.description }
-        </Link>
-        <Link
-          className="hover:text-blue-600 font-bold text-red-500 text-sm"
+          className="hover:text-myshop-orange transition-colors text-sm font-normal line-clamp-2 min-h-[40px] text-gray-700"
           href={ `/product/${ product.slug }` }>
           { product.title }
         </Link>
-        <span className="font-bold">{  product.descriptionMeasure }</span>
-        
-        <span className="font-bold">{ currencyFormat( product.price) }</span>
+
+        {/* Descripción */ }
+        <Link
+          className="text-gray-500 text-xs line-clamp-2 hover:text-myshop-orange transition-colors"
+          href={ `/product/${ product.slug }` }>
+          { product.description }
+        </Link>
+
+        {/* Medida */ }
+        { product.descriptionMeasure && (
+          <span className="text-gray-500 text-xs">{ product.descriptionMeasure }</span>
+        ) }
+
+        {/* Precio */ }
+        <div className="mt-2">
+          <span className="text-2xl font-bold text-myshop-orange">
+            { currencyFormat( product.price ) }
+          </span>
+        </div>
+
+        {/* Botón agregar al carrito */ }
+        <button className="mt-2 w-full bg-myshop-orange hover:bg-myshop-orange-dark text-white py-2.5 px-4 rounded transition-all duration-300 font-bold text-sm uppercase">
+          Agregar
+        </button>
       </div>
 
     </div>

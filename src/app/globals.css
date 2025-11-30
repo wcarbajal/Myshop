@@ -3,9 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --primary: #274494;
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
+  --primary: #FF6600;
+  --primary-dark: #E65C00;
+  --primary-light: #FF8533;
+  --secondary: #333333;
+  --secondary-light: #666666;
+  --foreground-rgb: 51, 51, 51;
+  --background-start-rgb: 249, 249, 249;
   --background-end-rgb: 255, 255, 255;
 }
 /* 
@@ -17,16 +21,22 @@
   }
 } */
 
-
-
 @keyframes fadeIn {
-  0% {opacity: 0;}
-  100% {opacity: 1;}
-} 
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 
 @-webkit-keyframes fadeIn {
-  0% {opacity: 0;}
-  100% {opacity: 1;}
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .fade-in {
@@ -39,13 +49,12 @@
   animation-name: fadeIn;
 }
 
-
 .btn-primary {
-  @apply bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all;
+  @apply bg-[#FF6600] hover:bg-[#E65C00] text-white py-2 px-4 rounded transition-all font-semibold;
 }
 
 .btn-secondary {
-  @apply bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded transition-all;
+  @apply bg-[#333333] hover:bg-[#555555] text-white py-2 px-4 rounded transition-all font-semibold;
 }
 
 .btn-disabled {
