@@ -33,7 +33,7 @@ export default {
           throw new Error( "Credenciales incorrectas" );
         }
         // verificacion del email
-        if ( false && !user.emailVerified ) {
+        /* if ( !user.emailVerified ) {
 
           const verifiTokenExists = await prisma.verificationToken.findFirst( {
             where: {
@@ -73,7 +73,7 @@ export default {
 
 
 
-        }
+        } */
 
         return user;
       },
