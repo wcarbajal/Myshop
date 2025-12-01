@@ -9,7 +9,7 @@ async function main() {
   // 1. Borrar registros previos
   // await Promise.all( [
 
-  await prisma.brands.deleteMany(); 
+  await prisma.brands.deleteMany();
 
 
   await prisma.orderAddress.deleteMany();
@@ -25,21 +25,21 @@ async function main() {
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
   // ]);
-  
+
   const { categories, users, brands } = initialData;
 
 
-  await prisma.brands.createMany({
+  await prisma.brands.createMany( {
     data: brands
-  });
+  } );
 
-  await prisma.user.createMany({
+  await prisma.user.createMany( {
     data: users
-  });
+  } );
 
-  await prisma.country.createMany({
+  await prisma.country.createMany( {
     data: countries
-  });
+  } );
 
 
 
@@ -47,21 +47,21 @@ async function main() {
   // {
   //   name: 'Shirt'
   // }
-  const categoriesData = categories.map( (name) => ({ name }));
-  
-  await prisma.category.createMany({
-    data: categoriesData
-  });
+  const categoriesData = categories.map( ( name ) => ( { name } ) );
 
-  
+  await prisma.category.createMany( {
+    data: categoriesData
+  } );
+
+
   const categoriesDB = await prisma.category.findMany();
-  
-  const categoriesMap = categoriesDB.reduce( (map, category) => {
-    map[ category.name.toLowerCase()] = category.id;
+
+  const categoriesMap = categoriesDB.reduce( ( map, category ) => {
+    map[ category.name.toLowerCase() ] = category.id;
     return map;
-  }, {} as Record<string, string>); //<string=shirt, string=categoryID>
-  
-  
+  }, {} as Record<string, string> ); //<string=shirt, string=categoryID>
+
+
 
   // Productos
 
@@ -106,7 +106,7 @@ async function main() {
 
 ( () => {
 
-  if ( process.env.NODE_ENV === 'production' ) return;
+  // if ( process.env.NODE_ENV === 'production' ) return;
 
 
   main();
