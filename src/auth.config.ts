@@ -12,22 +12,34 @@ export default {
   providers: [
     Credentials( {
       authorize: async ( credentials ) => {
-        console.log('Inicion del credentials')
+        console.log( 'Inicio del credentials', { credentials } );
 
         const { data, success } = loginSchema.safeParse( credentials );
 
         if ( !success ) {
+          console.log( '❌ Schema validation failed' );
           throw new Error( "Credenciales incorrectas" );
         }
+
+        console.log( '✅ Schema validation passed, searching user:', data.email );
+
         const user = await prisma.user.findUnique( {
           where: {
             email: data.email,
           },
         } );
+
+        console.log( '🔍 User found:', user ? 'YES' : 'NO', user ? `ID: ${ user.id }` : '' );
+
         if ( !user || !user.password ) {
+          console.log( '❌ User not found or no password' );
           throw new Error( "Credenciales incorrectas o usuario no encontrado" );
         }
+
+        console.log( '🔐 Comparing passwords...' );
         const isValid = await bcryptjs.compare( data.password, user.password );
+
+        console.log( '🔐 Password valid:', isValid );
 
         if ( !isValid ) {
           throw new Error( "Credenciales incorrectas" );
