@@ -560,7 +560,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
                   try {
                     setShowCamera( true );
                     const mediaStream = await navigator.mediaDevices.getUserMedia( {
-                      video: { facingMode: 'user' } // Cámara delantera
+                      video: { facingMode: 'environment' } // Cámara posterior
                     } );
                     setStream( mediaStream );
                   } catch ( error ) {
