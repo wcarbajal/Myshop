@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { fetchProductByBarcode } from '@/actions';
 
@@ -24,20 +24,49 @@ interface Props {
 
 export const BarcodeScanner = ( { onProductFound, onClose }: Props ) => {
   const [ scanning, setScanning ] = useState( false );
-  const [ message, setMessage ] = useState( '' );
+  const [ message, setMessage ] = useState( 'Presiona "Iniciar Escaneo" para comenzar' );
   const [ loading, setLoading ] = useState( false );
+  const [ html5QrCodeInstance, setHtml5QrCodeInstance ] = useState<Html5Qrcode | null>( null );
+
+  useEffect( () => {
+    // Cleanup al desmontar
+    return () => {
+      if ( html5QrCodeInstance ) {
+        try {
+          const state = html5QrCodeInstance.getState();
+          if ( state === 2 ) { // Solo detener si está escaneando
+            html5QrCodeInstance.stop().catch( () => {
+              // Ignorar errores en el cleanup
+            } );
+          }
+        } catch {
+          // Ignorar errores en el cleanup
+        }
+      }
+    };
+  }, [ html5QrCodeInstance ] );
 
   const startScanning = async () => {
     try {
       setScanning( true );
-      setMessage( 'Iniciando cámara...' );
+      setMessage( 'Detectando cámaras disponibles...' );
 
       const html5QrCode = new Html5Qrcode( "barcode-reader" );
+      setHtml5QrCodeInstance( html5QrCode );
+
+      console.log( '🔍 Buscando cámaras...' );
+      const devices = await Html5Qrcode.getCameras();
+      console.log( '📷 Cámaras encontradas:', devices );
+
+      if ( !devices || devices.length === 0 ) {
+        throw new Error( 'No se encontraron cámaras disponibles' );
+      }
+
+      setMessage( `Iniciando cámara...` );
 
       const config = {
         fps: 10,
         qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0,
         formatsToSupport: [
           // @ts-ignore
           Html5Qrcode.SCAN_TYPE_EAN_13,
@@ -50,55 +79,99 @@ export const BarcodeScanner = ( { onProductFound, onClose }: Props ) => {
         ]
       };
 
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        config,
-        async ( decodedText ) => {
-          setMessage( `Código detectado: ${ decodedText }` );
-          setLoading( true );
+      let cameraStarted = false;
+      for ( let i = 0; i < devices.length; i++ ) {
+        try {
+          console.log( `📸 Intentando cámara ${ i + 1 }/${ devices.length }` );
 
-          // Detener el escaneo
-          await html5QrCode.stop();
-          setScanning( false );
+          await html5QrCode.start(
+            devices[ i ].id,
+            config,
+            async ( decodedText ) => {
+              setMessage( `Código detectado: ${ decodedText }` );
+              setLoading( true );
 
-          // Buscar información del producto
-          setMessage( 'Buscando información del producto...' );
-          const productData = await fetchProductByBarcode( decodedText );
+              await html5QrCode.stop();
+              setScanning( false );
 
-          setLoading( false );
+              setMessage( 'Buscando información del producto...' );
+              const productData = await fetchProductByBarcode( decodedText );
 
-          if ( productData.found ) {
-            setMessage( `¡Producto encontrado! ${ productData.name }` );
-            onProductFound( productData );
-          } else {
-            setMessage( `Código escaneado: ${ decodedText }\nNo se encontró información. Puedes ingresar los datos manualmente.` );
-            onProductFound( {
-              found: false,
-              barcode: decodedText
-            } );
+              setLoading( false );
+
+              if ( productData.found ) {
+                setMessage( `¡Producto encontrado! ${ productData.name }` );
+                onProductFound( productData );
+              } else {
+                setMessage( `Código escaneado: ${ decodedText }\nNo se encontró información.` );
+                onProductFound( {
+                  found: false,
+                  barcode: decodedText
+                } );
+              }
+            },
+            ( errorMessage ) => {
+              // Errores normales de escaneo
+            }
+          );
+
+          cameraStarted = true;
+          console.log( '✅ Cámara iniciada' );
+          setMessage( '📸 Cámara lista - Apunta al código de barras' );
+          break;
+
+        } catch ( cameraError: any ) {
+          console.warn( `⚠️ Cámara ${ i + 1 } falló:`, cameraError.message );
+          if ( i === devices.length - 1 && !cameraStarted ) {
+            throw new Error( 'No se pudo iniciar ninguna cámara. Cierra otras aplicaciones que usen la cámara.' );
           }
-        },
-        ( errorMessage ) => {
-          // Errores de escaneo (normales mientras busca código)
         }
-      );
+      }
 
-      setMessage( 'Apunta la cámara al código de barras' );
-    } catch ( err ) {
-      console.error( 'Error al iniciar el escáner:', err );
-      setMessage( 'Error al acceder a la cámara. Verifica los permisos.' );
+      if ( !cameraStarted ) {
+        throw new Error( 'No se pudo iniciar la cámara' );
+      }
+
+    } catch ( err: any ) {
+      console.error( '❌ Error:', err );
+
+      let errorMsg = 'Error al acceder a la cámara.';
+
+      if ( err.name === 'NotAllowedError' || err.message?.includes( 'Permission' ) ) {
+        errorMsg = '❌ Permiso denegado. Permite el acceso a la cámara.';
+      } else if ( err.name === 'NotFoundError' ) {
+        errorMsg = '❌ No se encontró cámara disponible.';
+      } else if ( err.name === 'NotReadableError' ) {
+        errorMsg = '❌ La cámara está en uso. Cierra otras aplicaciones.';
+      } else if ( err.name === 'AbortError' || err.message?.includes( 'Timeout' ) ) {
+        errorMsg = '⏱️ Tiempo agotado. Desconecta el celular USB e intenta de nuevo.';
+      } else if ( err.message ) {
+        errorMsg = `❌ Error: ${ err.message }`;
+      }
+
+      setMessage( errorMsg );
       setScanning( false );
     }
   };
 
   const stopScanning = async () => {
     try {
-      const html5QrCode = new Html5Qrcode( "barcode-reader" );
-      await html5QrCode.stop();
+      if ( html5QrCodeInstance ) {
+        try {
+          const state = await html5QrCodeInstance.getState();
+          // Solo intentar detener si está escaneando
+          if ( state === 2 ) { // 2 = SCANNING
+            await html5QrCodeInstance.stop();
+          }
+        } catch ( innerErr ) {
+          // Ignorar error si el scanner ya está detenido
+        }
+      }
+    } catch ( err: any ) {
+      // Ignorar cualquier error al detener
+    } finally {
       setScanning( false );
       onClose();
-    } catch ( err ) {
-      console.error( 'Error al detener el escáner:', err );
     }
   };
 
@@ -127,8 +200,8 @@ export const BarcodeScanner = ( { onProductFound, onClose }: Props ) => {
             {/* Mensajes */ }
             { message && (
               <div className={ `p-4 rounded-lg ${ message.includes( 'Error' ) ? 'bg-red-100 text-red-700' :
-                  message.includes( 'encontrado' ) ? 'bg-green-100 text-green-700' :
-                    'bg-blue-100 text-blue-700'
+                message.includes( 'encontrado' ) ? 'bg-green-100 text-green-700' :
+                  'bg-blue-100 text-blue-700'
                 }` }>
                 <p className="whitespace-pre-line">{ message }</p>
               </div>
@@ -148,7 +221,7 @@ export const BarcodeScanner = ( { onProductFound, onClose }: Props ) => {
                 <button
                   onClick={ startScanning }
                   disabled={ loading }
-                  className="flex-1 bg-plazavea-green hover:bg-plazavea-green-dark text-white py-3 px-6 rounded-lg font-medium transition-colors disabled:bg-gray-400"
+                  className="flex-1 bg-plazavea-green hover:bg-plazavea-green-dark text-black  border-1 py-3 px-6 rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:text-black"
                 >
                   { loading ? 'Procesando...' : 'Iniciar Escaneo' }
                 </button>
