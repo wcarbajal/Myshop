@@ -1,12 +1,12 @@
 'use client';
 
 
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { Product } from '@/interfaces';
 import { useState } from 'react';
 import { currencyFormat } from '@/utils';
+import { ViewImage } from '@/components';
 
 interface Props {
   product: Product;
@@ -27,16 +27,17 @@ export const ProductGridItem = ( { product }: Props ) => {
     >
 
       <Link className="relative block overflow-hidden" href={ `/product/${ product.slug }` }>
-        <div className="relative bg-white p-4 h-48 sm:h-56 md:h-64 flex items-center justify-center">
-          <Image
+        <div
+          className="relative bg-white p-4 h-48 sm:h-56 md:h-64 flex items-center justify-center"
+          onMouseEnter={ () => product.images[ 1 ] && setDisplayImage( product.images[ 1 ] ) }
+          onMouseLeave={ () => setDisplayImage( product.images[ 0 ] ) }
+        >
+          <ViewImage
             src={ displayImage }
             alt={ product.title }
             className={ `w-full h-full object-contain transition-transform duration-300 ${ isHovered ? 'scale-105' : 'scale-100' }` }
             width={ 500 }
             height={ 500 }
-            priority
-            onMouseEnter={ () => setDisplayImage( product.images[ 1 ] ) }
-            onMouseLeave={ () => setDisplayImage( product.images[ 0 ] ) }
           />
         </div>
       </Link>
