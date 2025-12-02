@@ -221,7 +221,7 @@ export const BarcodeScanner = ( { onProductFound, onClose }: Props ) => {
             {/* Loading */ }
             { loading && (
               <div className="flex items-center justify-center p-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-plazavea-green"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-propio-green"></div>
                 <span className="ml-3 text-gray-600">Buscando producto...</span>
               </div>
             ) }
@@ -232,7 +232,7 @@ export const BarcodeScanner = ( { onProductFound, onClose }: Props ) => {
                 <button
                   onClick={ startScanning }
                   disabled={ loading }
-                  className="flex-1 bg-plazavea-green hover:bg-plazavea-green-dark text-black  border-1 py-3 px-6 rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:text-black"
+                  className="flex-1 bg-propio-green hover:bg-propio-green-dark text-black  border-1 py-3 px-6 rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:text-black"
                 >
                   { loading ? 'Procesando...' : 'Iniciar Escaneo' }
                 </button>

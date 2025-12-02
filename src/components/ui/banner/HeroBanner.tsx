@@ -20,7 +20,7 @@ const banners: Banner[] = [
     subtitle: "Hasta 50% de descuento en productos seleccionados",
     image: "/imgs/banner-1.jpg",
     link: "/products",
-    bgColor: "bg-gradient-to-r from-plazavea-green to-plazavea-green-light"
+    bgColor: "bg-gradient-to-r from-propio-green to-propio-green-light"
   },
   {
     id: 2,
@@ -84,7 +84,7 @@ export const HeroBanner = () => {
                       { banner.subtitle }
                     </p>
                   ) }
-                  <button className="bg-white text-plazavea-green px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors">
+                  <button className="bg-white text-propio-green px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors">
                     Ver Ofertas
                   </button>
                 </div>
@@ -127,8 +127,8 @@ export const HeroBanner = () => {
             key={ index }
             onClick={ () => goToSlide( index ) }
             className={ `w-3 h-3 rounded-full transition-all ${ index === currentSlide
-                ? 'bg-white w-8'
-                : 'bg-white/50 hover:bg-white/75'
+              ? 'bg-white w-8'
+              : 'bg-white/50 hover:bg-white/75'
               }` }
             aria-label={ `Ir al slide ${ index + 1 }` }
           />

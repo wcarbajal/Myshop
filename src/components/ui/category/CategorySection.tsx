@@ -21,14 +21,14 @@ export const CategorySection = ( { categories }: Props ) => {
               className="group flex flex-col items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
               {/* Círculo con icono o imagen */ }
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-plazavea-green to-plazavea-green-light flex items-center justify-center mb-3 group-hover:shadow-lg transition-shadow">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-propio-green to-propio-green-light flex items-center justify-center mb-3 group-hover:shadow-lg transition-shadow">
                 <span className="text-3xl md:text-4xl text-white">
                   { getCategoryIcon( category.name ) }
                 </span>
               </div>
 
               {/* Nombre de categoría */ }
-              <span className="text-center text-sm md:text-base font-medium text-gray-700 group-hover:text-plazavea-green transition-colors">
+              <span className="text-center text-sm md:text-base font-medium text-gray-700 group-hover:text-propio-green transition-colors">
                 { category.name }
               </span>
             </Link>
@@ -40,7 +40,7 @@ export const CategorySection = ( { categories }: Props ) => {
           <div className="text-center mt-8">
             <Link
               href="/category"
-              className="inline-block bg-plazavea-green hover:bg-plazavea-green-dark text-white px-8 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105"
+              className="inline-block bg-propio-green hover:bg-propio-green-dark text-white px-8 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105"
             >
               Ver todas las categorías
             </Link>
