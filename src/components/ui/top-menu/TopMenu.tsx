@@ -55,7 +55,7 @@ export const TopMenu = ( { categorias, isAdmin = false }: Props ) => {
 
 
   return (
-    <nav className="sticky top-0 z-10 shadow-md">
+    <nav className="sticky top-0 z-20 shadow-md">
       {/* Barra superior gris oscuro estilo Myshop */ }
       <div className="flex px-3 sm:px-5 py-2 sm:py-3 justify-between items-center w-full bg-myshop-gray">
 
@@ -65,55 +65,17 @@ export const TopMenu = ( { categorias, isAdmin = false }: Props ) => {
             <span className={ `${ titleFont.className } antialiased font-bold text-xl sm:text-2xl text-myshop-orange` }>
               Mary
             </span>
-            <span className="text-white text-base sm:text-xl font-semibold">|Shop</span>
+            <span className="text-white text-base sm:text-xl font-semibold">| Shop</span>
           </Link>
-        </div>
-
-        {/* Barra de búsqueda central - desktop */ }
-        <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-          <div className="flex w-full bg-white rounded overflow-hidden">
-            <input
-              type="text"
-              placeholder="¿Qué estás buscando?"
-              className="flex-1 px-4 py-2.5 outline-none text-gray-700 text-sm"
-              value={ productoBuscado }
-              onChange={ ( e ) => setProductoBuscado( e.target.value ) }
-              onKeyDown={ ( e ) => {
-                if ( e.key === 'Enter' ) {
-                  buscarProducto();
-                }
-              } }
-            />
-            <button className="px-8 bg-myshop-orange hover:bg-myshop-orange-dark transition-colors" onClick={ buscarProducto }>
-              <IoSearchOutline className="w-5 h-5 text-white" />
-            </button>
-          </div>
-        </div>
-
-        {/* Categorías - desktop */ }
-        <div className="hidden lg:flex items-center mr-4">
-          <select
-            className="bg-white text-gray-700 rounded h-10 px-4 outline-none hover:bg-gray-50 transition-colors cursor-pointer border border-gray-200"
-            value={ categoryStore }
-            onChange={ ( e ) => {
-              setCategoryStore( e.target.value );
-              window.location.replace( `/category/${ e.target.value }` );
-            } }>
-            { categorias.map( ( cat ) => (
-              <option key={ cat.id } value={ cat.name }>{ cat.name }</option>
-            ) ) }
-          </select>
         </div>
 
         {/* Iconos de acción */ }
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
-          <Link href="/search" className="md:hidden">
-            <IoSearchOutline className="w-5 h-5 sm:w-6 sm:h-6 text-white hover:text-myshop-orange transition-colors" />
-          </Link>
+          
 
           {/* Botón de búsqueda por código de barras para admins */ }
           { isAdmin && (
-            <div className="hidden sm:block">
+            <div className="">
               <AdminBarcodeSearch onProductFound={ handleBarcodeSearch } />
             </div>
           ) }
@@ -142,20 +104,44 @@ export const TopMenu = ( { categorias, isAdmin = false }: Props ) => {
         </div>
       </div>
 
-      {/* Barra de categorías móvil */ }
-      <div className="flex justify-center items-center bg-myshop-orange py-3 lg:hidden">
-        <span className="text-white font-semibold mr-3 text-sm">CATEGORÍAS</span>
-        <select
-          className="bg-white text-gray-700 rounded h-9 px-3 outline-none text-sm"
-          value={ categoryStore }
-          onChange={ ( e ) => {
-            setCategoryStore( e.target.value );
-            window.location.replace( `/category/${ e.target.value }` );
-          } }>
-          { categorias.map( ( cat ) => (
-            <option key={ cat.id } value={ cat.name }>{ cat.name }</option>
-          ) ) }
-        </select>
+
+
+      {/* Barra de busqueda y  categorías móvil */ }
+      <div className=" sm:flex justify-center py-1 bg-myshop-orange gap-3">
+        <div className="flex py-1 justify-center px-2 gap-1">          
+            <input
+              type="text"
+              placeholder="¿Qué estás buscando?"
+              className="flex-1 px-4 py-1 outline-none text-gray-700 text-sm rounded-md"
+              value={ productoBuscado }
+              onChange={ ( e ) => setProductoBuscado( e.target.value ) }
+              onKeyDown={ ( e ) => {
+                if ( e.key === 'Enter' ) {
+                  buscarProducto();
+                }
+              } }
+            />
+            <button className="px-5 rounded-md bg-slate-600 hover:bg-myshop-orange-dark transition-colors" onClick={ buscarProducto }>
+              <IoSearchOutline className="w-5 h-5 text-white" />
+            </button>
+          
+        </div>
+
+        <div className="flex items-center py-1 justify-center">
+          <span className="text-white font-semibold mr-3 text-xs ">CATEGORÍAS</span>
+          <select
+            className="bg-white text-gray-700 rounded h-6 px-3 outline-none text-sm"
+            value={ categoryStore }
+            onChange={ ( e ) => {
+              setCategoryStore( e.target.value );
+              window.location.replace( `/category/${ e.target.value }` );
+            } }>
+            { categorias.map( ( cat ) => (
+              <option key={ cat.id } value={ cat.name }>{ cat.name }</option>
+            ) ) }
+          </select>
+        </div>
+
       </div>
     </nav>
   );

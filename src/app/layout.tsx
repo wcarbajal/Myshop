@@ -7,7 +7,7 @@ import { Providers } from "@/components";
 export const metadata: Metadata = {
   title: {
     template: "%s - Mary | Shop",
-    default: "Home - My | Shop",
+    default: "Home - Mary | Shop",
   },
   description: "Una tienda virtual de productos",
 };

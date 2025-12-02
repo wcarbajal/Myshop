@@ -21,17 +21,17 @@ export const ProductGridItem = ( { product }: Props ) => {
 
   return (
     <div
-      className="rounded overflow-hidden fade-in bg-white border border-gray-200 hover:border-myshop-orange hover:shadow-lg transition-all duration-300 h-fit group"
+      className="rounded overflow-hidden fade-in bg-white border border-gray-200 hover:border-myshop-orange hover:shadow-lg transition-all duration-300 flex flex-col h-full group"
       onMouseEnter={ () => setIsHovered( true ) }
       onMouseLeave={ () => setIsHovered( false ) }
     >
 
       <Link className="relative block overflow-hidden" href={ `/product/${ product.slug }` }>
-        <div className="relative bg-white p-4">
+        <div className="relative bg-white p-4 h-48 sm:h-56 md:h-64 flex items-center justify-center">
           <Image
             src={ displayImage }
             alt={ product.title }
-            className={ `w-full object-contain transition-transform duration-300 ${ isHovered ? 'scale-105' : 'scale-100' }` }
+            className={ `w-full h-full object-contain transition-transform duration-300 ${ isHovered ? 'scale-105' : 'scale-100' }` }
             width={ 500 }
             height={ 500 }
             priority
@@ -41,7 +41,7 @@ export const ProductGridItem = ( { product }: Props ) => {
         </div>
       </Link>
 
-      <div className="p-4 flex flex-col gap-y-2 border-t border-gray-100">
+      <div className="p-4 flex flex-col gap-y-2 border-t border-gray-100 flex-1">
         {/* Marca */ }
         { product.brand?.name && (
           <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">
@@ -51,7 +51,7 @@ export const ProductGridItem = ( { product }: Props ) => {
 
         {/* Título del producto */ }
         <Link
-          className="hover:text-myshop-orange transition-colors text-sm font-normal line-clamp-2 min-h-[40px] text-gray-700"
+          className="hover:text-myshop-orange transition-colors text-sm font-bold line-clamp-2 min-h-[40px] text-gray-900"
           href={ `/product/${ product.slug }` }>
           { product.title }
         </Link>

@@ -19,7 +19,7 @@ export default function LoginPage( { searchParams }: Props ) {
         <div className="container mx-auto px-4">
           <Link href="/" className="flex items-center gap-2">
             <span className={ `${ titleFont.className } antialiased font-bold text-2xl text-myshop-orange` }>
-              My
+              Mary
             </span>
             <span className="text-white text-xl font-semibold">| Shop</span>
           </Link>
