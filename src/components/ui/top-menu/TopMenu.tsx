@@ -63,9 +63,9 @@ export const TopMenu = ( { categorias, isAdmin = false }: Props ) => {
         <div className="flex items-center">
           <Link href="/" className="flex items-center gap-2">
             <span className={ `${ titleFont.className } antialiased font-bold text-2xl text-myshop-orange` }>
-              My
+              Mary
             </span>
-            <span className="text-white text-xl font-semibold">| Shop</span>
+            <span className="text-white text-xl font-semibold">|Shop</span>
           </Link>
         </div>
 
