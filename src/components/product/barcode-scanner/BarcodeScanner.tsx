@@ -62,6 +62,17 @@ export const BarcodeScanner = ( { onProductFound, onClose }: Props ) => {
         throw new Error( 'No se encontraron cámaras disponibles' );
       }
 
+      // Priorizar cámara posterior (trasera)
+      const backCameras = devices.filter( d =>
+        d.label?.toLowerCase().includes( 'back' ) ||
+        d.label?.toLowerCase().includes( 'rear' ) ||
+        d.label?.toLowerCase().includes( 'trasera' ) ||
+        d.label?.toLowerCase().includes( 'posterior' )
+      );
+      const orderedDevices = [ ...backCameras, ...devices.filter( d => !backCameras.includes( d ) ) ];
+
+      console.log( '📷 Cámaras ordenadas (posteriores primero):', orderedDevices.map( d => d.label ) );
+
       setMessage( `Iniciando cámara...` );
 
       const config = {
@@ -80,12 +91,12 @@ export const BarcodeScanner = ( { onProductFound, onClose }: Props ) => {
       };
 
       let cameraStarted = false;
-      for ( let i = 0; i < devices.length; i++ ) {
+      for ( let i = 0; i < orderedDevices.length; i++ ) {
         try {
-          console.log( `📸 Intentando cámara ${ i + 1 }/${ devices.length }` );
+          console.log( `📸 Intentando cámara ${ i + 1 }/${ orderedDevices.length }: ${ orderedDevices[ i ].label }` );
 
           await html5QrCode.start(
-            devices[ i ].id,
+            orderedDevices[ i ].id,
             config,
             async ( decodedText ) => {
               setMessage( `Código detectado: ${ decodedText }` );
@@ -122,7 +133,7 @@ export const BarcodeScanner = ( { onProductFound, onClose }: Props ) => {
 
         } catch ( cameraError: any ) {
           console.warn( `⚠️ Cámara ${ i + 1 } falló:`, cameraError.message );
-          if ( i === devices.length - 1 && !cameraStarted ) {
+          if ( i === orderedDevices.length - 1 && !cameraStarted ) {
             throw new Error( 'No se pudo iniciar ninguna cámara. Cierra otras aplicaciones que usen la cámara.' );
           }
         }
