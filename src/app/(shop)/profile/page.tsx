@@ -116,7 +116,7 @@ export default async function ProfilePage() {
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">ID de Usuario</p>
                     <p className="text-sm font-semibold text-gray-900 truncate mt-1 font-mono">
-                      { session.user.id.split( '-' ).at( -1 ) }
+                      { session.user.id?.split( '-' ).at( -1 ) || 'N/A' }
                     </p>
                   </div>
                 </div>
