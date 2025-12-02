@@ -64,7 +64,7 @@ export const HeroBanner = () => {
   };
 
   return (
-    <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden rounded-lg mb-8 shadow-lg">
+    <div className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden rounded-lg mb-4 sm:mb-8 shadow-lg">
       {/* Slides */ }
       { banners.map( ( banner, index ) => (
         <div
@@ -74,17 +74,17 @@ export const HeroBanner = () => {
         >
           <Link href={ banner.link } className="block w-full h-full">
             <div className={ `relative w-full h-full ${ banner.bgColor }` }>
-              <div className="container mx-auto h-full flex items-center justify-between px-8">
+              <div className="container mx-auto h-full flex items-center justify-between px-4 sm:px-6 md:px-8">
                 <div className="text-white z-10 max-w-lg">
-                  <h2 className="text-3xl md:text-5xl font-bold mb-4">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-2 sm:mb-4">
                     { banner.title }
                   </h2>
                   { banner.subtitle && (
-                    <p className="text-lg md:text-2xl mb-6">
+                    <p className="text-sm sm:text-base md:text-lg lg:text-2xl mb-3 sm:mb-6">
                       { banner.subtitle }
                     </p>
                   ) }
-                  <button className="bg-white text-propio-green px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors">
+                  <button className="bg-white text-propio-green px-4 sm:px-6 md:px-8 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-bold hover:bg-gray-100 transition-colors">
                     Ver Ofertas
                   </button>
                 </div>
@@ -102,20 +102,20 @@ export const HeroBanner = () => {
       {/* Controles de navegación */ }
       <button
         onClick={ prevSlide }
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-10"
         aria-label="Anterior"
       >
-        <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 sm:w-6 sm:h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 2 } d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
       <button
         onClick={ nextSlide }
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-10"
         aria-label="Siguiente"
       >
-        <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 sm:w-6 sm:h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 2 } d="M9 5l7 7-7 7" />
         </svg>
       </button>

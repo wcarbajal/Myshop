@@ -37,25 +37,25 @@ export default async function CategoriesPage() {
       </div>
 
       <div className="mb-10">
-        <table className="min-w-full">
-          <thead className="bg-gray-200 border-b">
+        <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
+          <thead className="bg-myshop-gray">
             <tr>
               <th
                 scope="col"
-                className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
+                className="text-sm font-semibold text-white px-6 py-4 text-left"
               >
                 #ID
               </th>
               <th
                 scope="col"
-                className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
+                className="text-sm font-semibold text-white px-6 py-4 text-left"
               >
                 Nombre de Categoria
               </th>
               
               <th
                 scope="col"
-                className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
+                className="text-sm font-semibold text-white px-6 py-4 text-left"
               >
                 Opciones
               </th>
@@ -65,7 +65,7 @@ export default async function CategoriesPage() {
             { categoryList.map( ( category ) => (
               <tr
                 key={ category.id }
-                className="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100"
+                className="bg-white border-b border-gray-200 transition duration-300 ease-in-out hover:bg-orange-50"
               >
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   { category.id.split( "-" ).at( -1 ) }
@@ -79,7 +79,7 @@ export default async function CategoriesPage() {
 
                 <td className="text-sm text-gray-900 font-light px-6 w-32">
                   <div className="flex gap-2 ">
-                    <Link href={ `/admin/category/${ category.id }` } className="hover:text-blue-500">
+                    <Link href={ `/admin/category/${ category.id }` } className="text-gray-600 hover:text-myshop-orange transition-colors">
                       <TbEdit size={ 25 } />
                     </Link>
 

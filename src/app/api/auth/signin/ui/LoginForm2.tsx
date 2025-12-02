@@ -63,19 +63,20 @@ export const LoginForm2 = () => {
     <>
 
       <Form { ...form }>
-        <form onSubmit={ form.handleSubmit( onSubmit ) } className="space-y-8" method='post'>
+        <form onSubmit={ form.handleSubmit( onSubmit ) } className="space-y-6" method='post'>
           <FormField
             control={ form.control }
             name="email"
             render={ ( { field } ) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel className="text-myshop-gray font-semibold">Correo Electrónico</FormLabel>
                 <FormControl>
-                  <Input placeholder="test@example.com" { ...field } />
+                  <Input
+                    placeholder="ejemplo@correo.com"
+                    { ...field }
+                    className="border-gray-300 focus:border-myshop-orange focus:ring-myshop-orange"
+                  />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             ) }
@@ -85,38 +86,50 @@ export const LoginForm2 = () => {
             name="password"
             render={ ( { field } ) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-myshop-gray font-semibold">Contraseña</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" { ...field } type='password' />
+                  <Input
+                    placeholder="Ingresa tu contraseña"
+                    { ...field }
+                    type='password'
+                    className="border-gray-300 focus:border-myshop-orange focus:ring-myshop-orange"
+                  />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-
+                <FormMessage />
               </FormItem>
             ) }
           />
           {
             error && (
-              <FormItem>
-                <FormMessage >{ error }</FormMessage>
-              </FormItem>
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                { error }
+              </div>
             )
           }
-          <div className="flex justify-center">
-            <Button variant='outline' type="submit" disabled={ isPending }>Aceptar</Button>
-
-          </div>
+          <Button
+            type="submit"
+            disabled={ isPending }
+            className="w-full bg-myshop-orange hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors"
+          >
+            { isPending ? 'Ingresando...' : 'Iniciar Sesión' }
+          </Button>
         </form>
       </Form>
-      <div className="mt-10 W-32 border-zinc-100 border "></div>
-      <div className="flex justify-center mt-10">
-          <span>¿No tienes una cuenta?</span>
-        </div>
 
-      <Link href={ '/auth/new-account' } className="flex justify-center" >
-        <Button variant='outline' type="button" className="mt-10">Nuevo usuario</Button>
-      </Link>
+      <div className="mt-8 pt-6 border-t border-gray-200">
+        <p className="text-center text-gray-600 mb-4">
+          ¿No tienes una cuenta?
+        </p>
+        <Link href={ '/auth/new-account' } className="block" >
+          <Button
+            variant='outline'
+            type="button"
+            className="w-full border-myshop-orange text-myshop-orange hover:bg-myshop-orange hover:text-white transition-colors"
+          >
+            Crear Cuenta Nueva
+          </Button>
+        </Link>
+      </div>
     </>
   );
 };

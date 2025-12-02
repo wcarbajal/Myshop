@@ -1,25 +1,22 @@
 'use client';
 
 import { logout } from '@/actions';
-import {
-
-  IoLogOutOutline,
-
-} from "react-icons/io5";
+import { IoLogOutOutline } from "react-icons/io5";
 
 
 export const Logout = () => {
 
   const handleLogout = async () => {
     await logout();
-
   };
 
   return (
-    <button onClick={ handleLogout } className="flex w-full items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all">
-
-      <IoLogOutOutline size={ 30 } />
-      <span className="ml-3 text-xl">Salir</span>
+    <button 
+      onClick={ handleLogout } 
+      className="flex w-full items-center p-3 hover:bg-red-50 rounded-lg transition-all group"
+    >
+      <IoLogOutOutline size={ 24 } className="text-red-600 group-hover:text-red-700 transition-colors" />
+      <span className="ml-3 text-base text-red-600 group-hover:text-red-700 font-medium transition-colors">Cerrar Sesión</span>
     </button>
   );
 };

@@ -36,7 +36,7 @@ export default async function Home( { searchParams }: Props ) {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Banner Hero */ }
-      <div className="container mx-auto px-4 pt-6">
+      <div className="container mx-auto px-3 sm:px-4 pt-4 sm:pt-6">
         <HeroBanner />
       </div>
 
@@ -44,7 +44,7 @@ export default async function Home( { searchParams }: Props ) {
       <CategorySection categories={ categories } />
 
       {/* Productos */ }
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <Title
           title="Ofertas de la Semana"
           subtitle="Los mejores precios en productos seleccionados"

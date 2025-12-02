@@ -57,15 +57,15 @@ export const TopMenu = ( { categorias, isAdmin = false }: Props ) => {
   return (
     <nav className="sticky top-0 z-10 shadow-md">
       {/* Barra superior gris oscuro estilo Myshop */ }
-      <div className="flex px-5 py-3 justify-between items-center w-full bg-myshop-gray">
+      <div className="flex px-3 sm:px-5 py-2 sm:py-3 justify-between items-center w-full bg-myshop-gray">
 
         {/* Logo */ }
-        <div className="flex items-center">
-          <Link href="/" className="flex items-center gap-2">
-            <span className={ `${ titleFont.className } antialiased font-bold text-2xl text-myshop-orange` }>
+        <div className="flex items-center flex-shrink-0">
+          <Link href="/" className="flex items-center gap-1 sm:gap-2">
+            <span className={ `${ titleFont.className } antialiased font-bold text-xl sm:text-2xl text-myshop-orange` }>
               Mary
             </span>
-            <span className="text-white text-xl font-semibold">|Shop</span>
+            <span className="text-white text-base sm:text-xl font-semibold">|Shop</span>
           </Link>
         </div>
 
@@ -106,14 +106,16 @@ export const TopMenu = ( { categorias, isAdmin = false }: Props ) => {
         </div>
 
         {/* Iconos de acción */ }
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           <Link href="/search" className="md:hidden">
-            <IoSearchOutline className="w-6 h-6 text-white hover:text-myshop-orange transition-colors" />
+            <IoSearchOutline className="w-5 h-5 sm:w-6 sm:h-6 text-white hover:text-myshop-orange transition-colors" />
           </Link>
 
           {/* Botón de búsqueda por código de barras para admins */ }
           { isAdmin && (
-            <AdminBarcodeSearch onProductFound={ handleBarcodeSearch } />
+            <div className="hidden sm:block">
+              <AdminBarcodeSearch onProductFound={ handleBarcodeSearch } />
+            </div>
           ) }
 
           <Link href={
@@ -127,13 +129,13 @@ export const TopMenu = ( { categorias, isAdmin = false }: Props ) => {
                   { totalItemsInCart }
                 </span>
               ) }
-              <IoCartOutline className="w-6 h-6 text-white hover:text-myshop-orange transition-colors" />
+              <IoCartOutline className="w-5 h-5 sm:w-6 sm:h-6 text-white hover:text-myshop-orange transition-colors" />
             </div>
           </Link>
 
           <button
             onClick={ openSideMenu }
-            className="px-4 py-2 rounded transition-all text-white hover:text-myshop-orange font-semibold text-sm"
+            className="px-2 sm:px-4 py-1.5 sm:py-2 rounded transition-all text-white hover:text-myshop-orange font-semibold text-xs sm:text-sm"
           >
             MENÚ
           </button>
