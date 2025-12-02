@@ -26,19 +26,21 @@ export const ProductGridItem = ( { product }: Props ) => {
       onMouseLeave={ () => setIsHovered( false ) }
     >
 
-      <Link className="relative block overflow-hidden" href={ `/product/${ product.slug }` }>
+      <Link className="relative block overflow-hidden bg-white" href={ `/product/${ product.slug }` }>
         <div
-          className="relative bg-white p-2 sm:p-4 aspect-square w-full flex items-center justify-center"
+          className="relative w-full pb-[100%]"
           onMouseEnter={ () => product.images[ 1 ] && setDisplayImage( product.images[ 1 ] ) }
           onMouseLeave={ () => setDisplayImage( product.images[ 0 ] ) }
         >
-          <ViewImage
-            src={ displayImage }
-            alt={ product.title }
-            className={ `max-w-full max-h-full object-contain transition-transform duration-300 ${ isHovered ? 'scale-105' : 'scale-100' }` }
-            width={ 500 }
-            height={ 500 }
-          />
+          <div className="absolute inset-0 p-2 sm:p-4 flex items-center justify-center">
+            <ViewImage
+              src={ displayImage }
+              alt={ product.title }
+              className={ `w-full h-full object-contain transition-transform duration-300 ${ isHovered ? 'scale-105' : 'scale-100' }` }
+              width={ 500 }
+              height={ 500 }
+            />
+          </div>
         </div>
       </Link>
 
