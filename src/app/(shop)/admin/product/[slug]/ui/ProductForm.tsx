@@ -48,6 +48,8 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
   const [ isModalOpen, setIsModalOpen ] = useState( false );
   const [ showScanner, setShowScanner ] = useState( false );
   const [ apiImageUrls, setApiImageUrls ] = useState<string[]>( [] );
+  const [ showCamera, setShowCamera ] = useState( false );
+  const [ stream, setStream ] = useState<MediaStream | null>( null );
 
   const openModal = () => { setIsModalOpen( true ); };
   const closeModal = () => { setIsModalOpen( false ); };
@@ -543,14 +545,35 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
 
           <div className="flex flex-col mb-2">
             <span>Fotos</span>
-            <input
-              tabIndex={ 13 }
-              type="file"
-              { ...register( 'images' ) }
-              multiple
-              className="p-2 border rounded-md bg-gray-200"
-              accept="image/png, image/jpeg, image/avif"
-            />
+            <div className="flex gap-2">
+              <input
+                tabIndex={ 13 }
+                type="file"
+                { ...register( 'images' ) }
+                multiple
+                className="p-2 border rounded-md bg-gray-200 flex-1 w-24"
+                accept="image/png, image/jpeg, image/avif"
+              />
+              <button
+                type="button"
+                onClick={ async () => {
+                  try {
+                    setShowCamera( true );
+                    const mediaStream = await navigator.mediaDevices.getUserMedia( {
+                      video: { facingMode: 'user' } // Cámara delantera
+                    } );
+                    setStream( mediaStream );
+                  } catch ( error ) {
+                    console.error( 'Error al acceder a la cámara:', error );
+                    alert( '❌ No se pudo acceder a la cámara. Verifica los permisos.' );
+                    setShowCamera( false );
+                  }
+                } }
+                className="bg-myshop-orange hover:bg-orange-600 w-32 text-white py-2 rounded transition-all whitespace-nowrap flex items-center justify-center gap-2"
+              >
+                📷 Tomar Foto
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -581,6 +604,109 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
       <div className="sm:hidden w-full col-span-1">
         <button tabIndex={ 14 } className="btn-primary w-full focus:font-bold focus:text-md">Guardar</button>
       </div>
+
+      {/* Modal de Cámara */ }
+      { showCamera && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-myshop-gray">
+              <h3 className="text-lg font-semibold text-white">📷 Tomar Foto del Producto</h3>
+              <button
+                type="button"
+                onClick={ () => {
+                  if ( stream ) {
+                    stream.getTracks().forEach( track => track.stop() );
+                    setStream( null );
+                  }
+                  setShowCamera( false );
+                } }
+                className="text-white hover:text-red-300 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="p-4">
+              <div className="relative bg-black rounded-lg overflow-hidden">
+                <video
+                  ref={ ( video ) => {
+                    if ( video && stream ) {
+                      video.srcObject = stream;
+                      video.play();
+                    }
+                  } }
+                  className="w-full h-auto max-h-[60vh] object-contain"
+                  autoPlay
+                  playsInline
+                />
+              </div>
+
+              <div className="mt-4 flex gap-3 justify-center">
+                <button
+                  type="button"
+                  onClick={ () => {
+                    const video = document.querySelector( 'video' );
+                    if ( !video ) return;
+
+                    const canvas = document.createElement( 'canvas' );
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const ctx = canvas.getContext( '2d' );
+                    if ( !ctx ) return;
+
+                    ctx.drawImage( video, 0, 0 );
+
+                    canvas.toBlob( ( blob ) => {
+                      if ( !blob ) return;
+
+                      const fileName = `foto-producto-${ Date.now() }.jpg`;
+                      const file = new File( [ blob ], fileName, { type: 'image/jpeg' } );
+
+                      const dataTransfer = new DataTransfer();
+                      const existingFiles = getValues( 'images' );
+
+                      // Agregar archivos existentes
+                      if ( existingFiles ) {
+                        Array.from( existingFiles ).forEach( f => dataTransfer.items.add( f ) );
+                      }
+
+                      // Agregar nueva foto
+                      dataTransfer.items.add( file );
+                      setValue( 'images', dataTransfer.files );
+
+                      // Cerrar cámara
+                      if ( stream ) {
+                        stream.getTracks().forEach( track => track.stop() );
+                        setStream( null );
+                      }
+                      setShowCamera( false );
+
+                      alert( '✅ Foto capturada correctamente' );
+                    }, 'image/jpeg', 0.9 );
+                  } }
+                  className="bg-myshop-orange hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition-all"
+                >
+                  📸 Capturar Foto
+                </button>
+
+                <button
+                  type="button"
+                  onClick={ () => {
+                    if ( stream ) {
+                      stream.getTracks().forEach( track => track.stop() );
+                      setStream( null );
+                    }
+                    setShowCamera( false );
+                  } }
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-all"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) }
     </form>
   );
 };
