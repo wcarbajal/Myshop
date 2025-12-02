@@ -28,14 +28,14 @@ export const ProductGridItem = ( { product }: Props ) => {
 
       <Link className="relative block overflow-hidden" href={ `/product/${ product.slug }` }>
         <div
-          className="relative bg-white p-4 h-48 sm:h-56 md:h-64 flex items-center justify-center"
+          className="relative bg-white p-2 sm:p-4 aspect-square w-full flex items-center justify-center"
           onMouseEnter={ () => product.images[ 1 ] && setDisplayImage( product.images[ 1 ] ) }
           onMouseLeave={ () => setDisplayImage( product.images[ 0 ] ) }
         >
           <ViewImage
             src={ displayImage }
             alt={ product.title }
-            className={ `w-full h-full object-contain transition-transform duration-300 ${ isHovered ? 'scale-105' : 'scale-100' }` }
+            className={ `max-w-full max-h-full object-contain transition-transform duration-300 ${ isHovered ? 'scale-105' : 'scale-100' }` }
             width={ 500 }
             height={ 500 }
           />
