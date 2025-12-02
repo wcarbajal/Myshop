@@ -478,7 +478,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
 
 
 
-        <button tabIndex={ 14 } className="btn-primary w-full focus:font-bold focus:text-md">Guardar</button>
+        <button tabIndex={ 14 } className="btn-primary w-full focus:font-bold focus:text-md hidden sm:block">Guardar</button>
       </div>
 
       {/* Selector de tallas y fotos */ }
@@ -575,6 +575,11 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
             ) ) }
           </div>
         </div>
+      </div>
+
+      {/* Botón Guardar para móviles - aparece al final */ }
+      <div className="sm:hidden w-full col-span-1">
+        <button tabIndex={ 14 } className="btn-primary w-full focus:font-bold focus:text-md">Guardar</button>
       </div>
     </form>
   );

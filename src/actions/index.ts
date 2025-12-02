@@ -30,10 +30,11 @@ export * from './product/get-product-by-slug';
 export * from './product/get-stock-by-slug';
 export * from './product/product-pagination-by-category';
 export * from './product/product-pagination';
+export * from './product/search-product-by-barcode';
 export * from './user/change-user-role';
 export * from './user/create-update-user';
 export * from './user/delete-user';
 export * from './user/get-paginater-users';
 export * from './user/get-user-by-id';
 export * from './user/users-pagination';
-export * from './product/product-search'
+export * from './product/product-search';

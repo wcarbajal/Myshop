@@ -8,14 +8,19 @@ import { titleFont } from "@/config/fonts";
 import { useCartStore, useUIStore } from "@/store";
 import { Category } from '@prisma/client';
 import { useCategoryStore } from '@/store/category/cart-category';
+import { AdminBarcodeSearch } from '@/components/product/admin-barcode-search/AdminBarcodeSearch';
+import { searchProductByBarcode } from '@/actions';
+import { useRouter } from 'next/navigation';
 
 
 interface Props {
   categorias: Category[];
+  isAdmin?: boolean;
 }
 
-export const TopMenu = ( { categorias }: Props ) => {
+export const TopMenu = ( { categorias, isAdmin = false }: Props ) => {
 
+  const router = useRouter();
   const openSideMenu = useUIStore( ( state ) => state.openSideMenu );
   const totalItemsInCart = useCartStore( ( state ) => state.getTotalItems() );
 
@@ -29,13 +34,24 @@ export const TopMenu = ( { categorias }: Props ) => {
     setLoaded( true );
   }, [] );
 
+  const handleBarcodeSearch = async ( barcode: string ) => {
+    const result = await searchProductByBarcode( barcode );
+
+    if ( result.ok && result.product ) {
+      // Redirigir al producto encontrado
+      router.push( `/product/${ result.product.slug }` );
+    } else {
+      alert( `❌ ${ result.message }\n\nCódigo: ${ barcode }` );
+    }
+  };
+
   const buscarProducto = () => {
     // Lógica para buscar producto
     console.log( "Buscando producto:", productoBuscado );
     if ( productoBuscado.trim() !== "" ) {
       window.location.replace( `/products/${ encodeURIComponent( productoBuscado.trim() ) }` );
     }
-  }
+  };
 
 
   return (
@@ -94,6 +110,11 @@ export const TopMenu = ( { categorias }: Props ) => {
           <Link href="/search" className="md:hidden">
             <IoSearchOutline className="w-6 h-6 text-white hover:text-myshop-orange transition-colors" />
           </Link>
+
+          {/* Botón de búsqueda por código de barras para admins */ }
+          { isAdmin && (
+            <AdminBarcodeSearch onProductFound={ handleBarcodeSearch } />
+          ) }
 
           <Link href={
             ( ( totalItemsInCart === 0 ) && loaded )

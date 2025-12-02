@@ -9,6 +9,7 @@ export * from './product/slideshow/ProductMobileSlideshow';
 export * from './product/slideshow/ProductSlideshow';
 export * from './product/stock-label/StockLabel';
 export * from './product/barcode-scanner/BarcodeScanner';
+export * from './product/admin-barcode-search/AdminBarcodeSearch';
 export * from './products/product-delete-button/DeleteButton';
 export * from './products/product-grid/ProductGrid';
 export * from './products/product-grid/ProductGridItem';
