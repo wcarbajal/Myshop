@@ -123,17 +123,17 @@ export const RegisterForm2 = () => {
           </div>
         </form>
       </Form>
-      
-        <div className="mt-10 W-32 border-zinc-100 border "></div>
-        <div className="flex justify-center mt-10">
-          <span>¿Ya tienes una cuenta?</span>
-        </div>
+
+      <div className="mt-10 W-32 border-zinc-100 border "></div>
+      <div className="flex justify-center mt-10">
+        <span>¿Ya tienes una cuenta?</span>
+      </div>
 
 
-        <Link href={ '/auth/login' } className="flex justify-center" >
-          <Button variant='outline' type="button" className="mt-10">Logear usuario</Button>
-        </Link>
-      
+      <Link href={ '/api/auth/signin' } className="flex justify-center" >
+        <Button variant='outline' type="button" className="mt-10">Logear usuario</Button>
+      </Link>
+
     </>
   );
 };

@@ -1,7 +1,7 @@
 
 // https://tailwindcomponents.com/component/hoverable-table
 
-import {  getPaginatedBrands } from "@/actions";
+import { getPaginatedBrands } from "@/actions";
 import { Pagination, Title } from "@/components";
 
 export const revalidate = 0;
@@ -18,7 +18,7 @@ export default async function BrandsPage() {
 
   if ( !ok ) {
     console.error( 'Error al obtener las marcas:', message );
-    redirect( "/auth/login" );
+    redirect( "/api/auth/signin" );
   }
 
   if ( brands.length === 0 ) {
@@ -38,9 +38,9 @@ export default async function BrandsPage() {
       </div>
 
       <div className="mb-10">
-        
-        <BrandsTable brands={ brands} />
-       
+
+        <BrandsTable brands={ brands } />
+
 
         <Pagination totalPages={ 1 } />
       </div>

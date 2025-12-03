@@ -55,7 +55,7 @@ export async function GET( request: NextRequest ) {
     },
   } );
 
-  redirect( "/auth/login?verified=true" );
+  redirect( "/api/auth/signin?verified=true" );
 
 
 }

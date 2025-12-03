@@ -10,7 +10,7 @@ export default async function AdminLayout({children}: {
 
   if ( session?.user.role !== 'admin' ) {
     
-    redirect('/auth/login');
+    redirect('/api/auth/signin');
   }
 
   return (

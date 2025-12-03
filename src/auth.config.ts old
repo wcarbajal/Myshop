@@ -9,7 +9,7 @@ import prisma from './lib/prisma';
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   pages: {
-    signIn: 'auth/login',
+    signIn: 'api/auth/signin',
     newUser: 'auth/new-account',
   },
 

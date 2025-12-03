@@ -7,10 +7,10 @@ import { MdOutlineAlternateEmail, MdCardTravel, MdOutlineGroup, MdOutlinePersonP
 
 export default async function ProfilePage() {
   const session = await auth();
- 
+
 
   if ( !session?.user ) {
-    // redirect('/auth/login?returnTo=/perfil');
+    // redirect('/api/auth/signin?returnTo=/perfil');
     redirect( "/" );
   }
 

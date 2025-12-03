@@ -107,7 +107,7 @@ export const RegisterForm = () => {
         <div className="flex-1 border-t border-gray-500"></div>
       </div>
 
-      <Link href="/auth/login" className="btn-secondary text-center">
+      <Link href="/api/auth/signin" className="btn-secondary text-center">
         Ingresar
       </Link>
     </form>

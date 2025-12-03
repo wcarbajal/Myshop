@@ -17,7 +17,7 @@ export default async function CategoriesPage() {
 
   if ( !categoryList ) {
     console.error('Error al obtener las categoruas:');
-    redirect( "/auth/login" );
+    redirect( "/api/auth/signin" );
   }
 
   if (categoryList.length === 0) {
