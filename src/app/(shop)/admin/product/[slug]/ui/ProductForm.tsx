@@ -9,8 +9,9 @@ import { useRouter } from 'next/navigation';
 import { ViewImage, BarcodeScanner } from '@/components';
 import { Brands, Measure } from '@prisma/client';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal } from './Modal';
+import { BrandModalForm } from './BrandModalForm';
 
 
 interface Props {
@@ -50,6 +51,8 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
   const [ apiImageUrls, setApiImageUrls ] = useState<string[]>( [] );
   const [ showCamera, setShowCamera ] = useState( false );
   const [ stream, setStream ] = useState<MediaStream | null>( null );
+  const [ barcodeLength, setBarcodeLength ] = useState( 0 );
+  const [ showBrandModal, setShowBrandModal ] = useState( false );
 
   const openModal = () => { setIsModalOpen( true ); };
   const closeModal = () => { setIsModalOpen( false ); };
@@ -71,7 +74,7 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
       slug: productIn.slug ?? '',
       description: productIn.description ?? '',
       price: productIn.price ?? 0,
-      inStock: productIn.inStock ?? 0,
+      inStock: productIn.inStock ?? 10,
       brandId: productIn.brand?.id ?? '',
       descriptionMeasure: productIn.descriptionMeasure ?? '',
       measure: productIn.measure ?? 'nodefinido',
@@ -83,11 +86,28 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
     },
   } );
 
-  /* const onSizeChanged = ( size: string ) => {
-    const sizes = new Set( getValues( "sizes" ) );
-    sizes.has( size ) ? sizes.delete( size ) : sizes.add( size );
-    setValue( "sizes", Array.from( sizes ) );
-  }; */
+
+  // Observar el campo de código de barras
+  const barcodeValue = watch( 'codigoean13' );
+
+  // Actualizar el contador cuando cambie el valor
+  useEffect( () => {
+    setBarcodeLength( barcodeValue?.length || 0 );
+  }, [ barcodeValue ] );
+
+  // Generar slug automáticamente a partir del título
+  const titleValue = watch( 'title' );
+
+  useEffect( () => {
+    if ( titleValue ) {
+      const generatedSlug = titleValue
+        .toLowerCase()
+        .trim()
+        .replace( /[^a-z0-9\s]/g, '' ) // Eliminar caracteres especiales
+        .replace( /\s+/g, '_' ); // Reemplazar espacios por guiones bajos
+      setValue( 'slug', generatedSlug );
+    }
+  }, [ titleValue, setValue ] );
 
   const handleProductFound = async ( productData: any ) => {
     // Llenar automáticamente los campos del formulario con la información encontrada
@@ -101,8 +121,9 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         // Generar slug automáticamente
         const slug = productData.name
           .toLowerCase()
-          .replace( /[^a-z0-9]+/g, '-' )
-          .replace( /(^-|-$)/g, '' );
+          .trim()
+          .replace( /[^a-z0-9\s]/g, '' )
+          .replace( /\s+/g, '_' );
         setValue( 'slug', slug );
       }
 
@@ -275,10 +296,15 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
 
       <div className="w-full">
         <div className="flex flex-col mb-2">
-          <span>Código de barras</span>
-          <div className="flex gap-2">
-            <input
+          <div className="flex justify-between items-center">
+            <span>Código de barras</span>
+            <span className={ `text-sm font-semibold ${ barcodeLength === 13 ? 'text-green-600' : 'text-orange-500' }` }>
+              { barcodeLength }/13 dígitos
+            </span>
+          </div>
+          <div className="flex flex-col gap-2">
 
+            <input
               type="text"
               className="p-2 border rounded-md bg-gray-200 w-full"
               { ...register( "codigoean13", {
@@ -294,23 +320,24 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
               } ) }
               tabIndex={ 1 }
             />
-            <button
-              tabIndex={ 3 }
-              className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all whitespace-nowrap"
-              onClick={ handleSearchBarcode }
-              type='button'
-            >
-              🔍 Buscar
-            </button>
-            <button
-              tabIndex={ 2 }
-              className="btn-primary whitespace-nowrap"
-              onClick={ () => setShowScanner( true ) }
-              type='button'
-            >
-              📷 Escanear
-            </button>
-
+            <div className="flex justify-end gap-2">
+              <button
+                tabIndex={ 3 }
+                className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all whitespace-nowrap"
+                onClick={ handleSearchBarcode }
+                type='button'
+              >
+                🔍 Buscar
+              </button>
+              <button
+                tabIndex={ 2 }
+                className="btn-primary whitespace-nowrap"
+                onClick={ () => setShowScanner( true ) }
+                type='button'
+              >
+                📷 Escanear
+              </button>
+            </div>
           </div>
 
           {/* Escáner de Código de Barras */ }
@@ -395,7 +422,16 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
         </div>
 
         <div className="flex flex-col mb-2">
-          <span>Marca</span>
+          <div className="flex justify-between items-center">
+            <span>Marca</span>
+            <button
+              type="button"
+              onClick={ () => setShowBrandModal( true ) }
+              className="text-sm font-semibold text-blue-600 hover:text-blue-800 underline cursor-pointer"
+            >
+              + Nueva Marca
+            </button>
+          </div>
           <select
             tabIndex={ 8 }
 
@@ -604,6 +640,17 @@ export const ProductForm = ( { productIn, categories, brands }: Props ) => {
       <div className="sm:hidden w-full col-span-1">
         <button tabIndex={ 14 } className="btn-primary w-full focus:font-bold focus:text-md">Guardar</button>
       </div>
+
+      {/* Modal de Nueva Marca */ }
+      { showBrandModal && (
+        <BrandModalForm
+          onClose={ () => setShowBrandModal( false ) }
+          onBrandCreated={ () => {
+            setShowBrandModal( false );
+            window.location.reload();
+          } }
+        />
+      ) }
 
       {/* Modal de Cámara */ }
       { showCamera && (

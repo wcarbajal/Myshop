@@ -9,6 +9,7 @@ import { Pagination, ProductGrid, Title, HeroBanner, CategorySection } from '@/c
 import { Logout } from '@/components/logout/Logout';
 import { auth } from '@/auth';
 import { getPaginatedProductsWithImages } from '@/actions';
+import { BusquedaCategoria } from '@/components/ui/top-menu/BusquedaCategoria';
 
 
 
@@ -35,6 +36,9 @@ export default async function Home( { searchParams }: Props ) {
 
   return (
     <div className="bg-gray-50 min-h-screen">
+
+      <BusquedaCategoria categorias={ categories } />
+
       {/* Banner Hero */ }
       <div className="container mx-auto px-3 sm:px-4 pt-4 sm:pt-6">
         <HeroBanner />

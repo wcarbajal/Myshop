@@ -52,14 +52,14 @@ export const BrandForm = ( { idBrand, nameBrand, stateBrand }: Props ) => {
   const onSubmit = async ( data: FormInputs ) => {
     //const formData = new FormData();
 
-    
-    let identificador = data.id === '' ? 'new' : data.id;
-   
-    const brand = await createUpdateBrand( identificador, data.name, data.state! );
 
-    
+    let identificador = data.id === '' ? 'new' : data.id;
+
+    const brand = await createUpdateBrand( identificador, data.name, data.state! );
+    console.log( "la marca que intento guardar: ", brand );
+
     if ( !brand.ok ) {
-      alert( 'Producto no se pudo actualizar' );
+      alert( `Error: ${ brand.message }` );
       return;
     }
     if ( brand.ok ) {
@@ -86,7 +86,7 @@ export const BrandForm = ( { idBrand, nameBrand, stateBrand }: Props ) => {
             className="p-2 border rounded-md bg-gray-200"
             { ...register( "name", {
               required: {
-                value: true,                
+                value: true,
                 message: "El nombre es obligatorio",
               },
               minLength: {

@@ -7,9 +7,9 @@ import { Providers } from "@/components";
 export const metadata: Metadata = {
   title: {
     template: "%s - Mary | Shop",
-    default: "Home - Mary | Shop",
+    default: "Ventas - Mary | Shop",
   },
-  description: "Una tienda virtual de productos",
+  description: "Una tienda virtual.",
 };
 
 export default function RootLayout({

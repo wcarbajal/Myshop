@@ -69,6 +69,7 @@ export const UsersTable = ( { users }: Props ) => {
                       >
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
+                        <option value="seller">Seller</option>
                       </select>
                     </div>
                   </div>

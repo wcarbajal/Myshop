@@ -48,6 +48,8 @@ enum Gender {
 enum Role {
   admin
   user
+  seller
+
 }
 
 model Category {

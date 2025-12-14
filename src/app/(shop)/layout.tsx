@@ -13,7 +13,7 @@ export default async function ShopLayout( { children }: {
   return (
     <main className="min-h-screen">
 
-      <TopMenu categorias={ categorias } isAdmin={ isAdmin } />
+      <TopMenu  isAdmin={ isAdmin } />
       <Sidebar />
 
       <div className="px-0 sm:px-10">
