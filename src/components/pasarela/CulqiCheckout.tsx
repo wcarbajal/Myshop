@@ -78,6 +78,14 @@ export const CulqiCheckout = ( { orderId, amount, email, description }: Props ) 
         window.Culqi.options( {
           lang: 'es',
           installments: false,
+          paymentMethods: {
+            tarjeta: true,
+            yape: false,
+            billetera: false,
+            bancaMovil: false,
+            agente: false,
+            cuotealo: false,
+          },
           style: {
             logo: '',
             maincolor: '#f97316', // Color naranja de tu marca
@@ -113,7 +121,6 @@ export const CulqiCheckout = ( { orderId, amount, email, description }: Props ) 
       return;
     }
 
-    setIsLoading( true );
     setError( null );
 
     // Configurar los datos del pago
@@ -122,11 +129,11 @@ export const CulqiCheckout = ( { orderId, amount, email, description }: Props ) 
       currency: 'PEN',
       description: description || `Orden #${ orderId }`,
       amount: Math.round( amount * 100 ), // Convertir a céntimos
+      order: orderId,
     } );
 
     // Abrir el modal de Culqi
     window.Culqi.open();
-    setIsLoading( false );
   };
 
   return (
