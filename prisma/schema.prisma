@@ -201,7 +201,7 @@ model Order {
   OrderAddress OrderAddress?
 
   transactionId String?
-  paymentMethod String? // 'culqi', 'izipay', etc.
+  paymentMethod String? // 'culqi', 'paypal', etc.
   paymentStatus String? // 'pending', 'approved', 'rejected'
 }
 

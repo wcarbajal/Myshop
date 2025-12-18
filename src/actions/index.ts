@@ -19,7 +19,6 @@ export { getOrderById} from './order/get-order-by-id';
 export { getOrdersByUser} from './order/get-orders-by-user';
 export { getPaginatedOrders} from './order/get-paginated-orders';
 export { placeOrder} from './order/place-order';
-export { getTokenIzi} from './payments/get-token';
 export { paypalCheckPayment} from './payments/paypal-check-payment';
 export { setTransactionId} from './payments/set-transaction-id';
 export { createUpdateProduct} from './product/create-update-product';

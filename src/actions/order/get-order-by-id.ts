@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma';
 
 
 
-export const getOrderById = async( id: string ) => {
+export const getOrderById = async ( id: string ) => {
 
   const session = await auth();
 
@@ -13,16 +13,22 @@ export const getOrderById = async( id: string ) => {
     return {
       ok: false,
       message: 'Debe de estar autenticado'
-    }
+    };
   }
 
 
   try {
-    
-    const order = await prisma.order.findUnique({
+
+    const order = await prisma.order.findUnique( {
       where: { id },
       include: {
         OrderAddress: true,
+        user: {
+          select: {
+            email: true,
+            name: true,
+          }
+        },
         OrderItem: {
           select: {
             price: true,
@@ -45,13 +51,13 @@ export const getOrderById = async( id: string ) => {
           }
         }
       }
-    });
+    } );
 
-    if( !order ) throw `${ id } no existe`;
+    if ( !order ) throw `${ id } no existe`;
 
     if ( session.user.role === 'user' ) {
       if ( session.user.id !== order.userId ) {
-        throw `${ id } no es de ese usuario`
+        throw `${ id } no es de ese usuario`;
       }
     }
 
@@ -60,17 +66,17 @@ export const getOrderById = async( id: string ) => {
     return {
       ok: true,
       order: order,
-    }
+    };
 
 
-  } catch (error) {
+  } catch ( error ) {
 
-    console.log(error);
+    console.log( error );
 
     return {
       ok: false,
       message: 'Orden no existe'
-    }
+    };
 
 
   }
@@ -78,4 +84,4 @@ export const getOrderById = async( id: string ) => {
 
 
 
-}
+};

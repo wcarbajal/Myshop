@@ -1,7 +1,6 @@
 export * from './brand/BrandDeleteButton';
 export * from './logout/Logout';
 export * from './orders/OrderStatus';
-export * from './pasarela/ButtonPay';
 export * from './product/product-image/ViewImage';
 export * from './product/quantity-selector/QuantitySelector';
 export * from './product/size-selector/SizeSelector';
