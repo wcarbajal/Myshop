@@ -149,13 +149,17 @@ export const CulqiCheckout = ( { orderId, amount, email, description, publicKey 
 
     setError( null );
 
+    // Generar un ID de orden corto para Culqi (máximo 25 caracteres alfanuméricos)
+    // Culqi requiere que sea alfanumérico y sin caracteres especiales
+    const shortOrderId = orderId.replace( /-/g, '' ).substring( 0, 25 );
+
     // Configurar los datos del pago
     window.Culqi.settings( {
       title: 'MyShop',
       currency: 'PEN',
       description: description || `Orden #${ orderId }`,
       amount: Math.round( amount * 100 ), // Convertir a céntimos
-      order: orderId,
+      order: shortOrderId,
     } );
 
     // Abrir el modal de Culqi
