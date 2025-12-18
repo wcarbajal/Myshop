@@ -49,7 +49,6 @@ enum Role {
   admin
   user
   seller
-
 }
 
 model Category {
@@ -146,11 +145,11 @@ model Account {
 
   @@id([provider, providerAccountId])
 }
+
 model VerificationToken {
-  identifier String @unique
-  token       String
-  expiresAt   DateTime
-  
+  identifier String   @unique
+  token      String
+  expiresAt  DateTime
 
   @@id([identifier])
 }
@@ -202,6 +201,8 @@ model Order {
   OrderAddress OrderAddress?
 
   transactionId String?
+  paymentMethod String? // 'culqi', 'izipay', etc.
+  paymentStatus String? // 'pending', 'approved', 'rejected'
 }
 
 model OrderItem {

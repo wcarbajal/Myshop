@@ -1,13 +1,10 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { Category, Product, ProductImage as ProductWithImage } from "@/interfaces";
-import Image from "next/image";
-import clsx from "clsx";
+import { Brand,  ProductImage as ProductWithImage } from "@/interfaces";
 import { createUpdateBrand, createUpdateProduct, deleteProductImage } from "@/actions";
-import { redirect, useRouter } from 'next/navigation';
-import { ViewImage } from '@/components';
-import { Brands, State } from '@prisma/client';
+import {  useRouter } from 'next/navigation';
+import {  State } from '@prisma/client';
 import Link from 'next/link';
 
 interface Props {
@@ -15,13 +12,6 @@ interface Props {
   nameBrand: string;
   stateBrand: State | undefined;
 };
-
-
-interface FormInputs {
-  id: string;
-  name: string;
-  state: State;
-}
 
 export const BrandForm = ( { idBrand, nameBrand, stateBrand }: Props ) => {
 
@@ -32,30 +22,21 @@ export const BrandForm = ( { idBrand, nameBrand, stateBrand }: Props ) => {
     register,
     formState: { errors },
 
-  } = useForm<FormInputs>( {
+  } = useForm<Brand>( {
     defaultValues: {
       id: idBrand ?? "",
       name: nameBrand ?? "",
       state: stateBrand,
-
     },
   } );
 
 
 
-  /*  const onSizeChanged = ( size: string ) => {
-     const sizes = new Set( getValues( "sizes" ) );
-     sizes.has( size ) ? sizes.delete( size ) : sizes.add( size );
-     setValue( "sizes", Array.from( sizes ) );
-   };
-  */
-  const onSubmit = async ( data: FormInputs ) => {
-    //const formData = new FormData();
+  const onSubmit = async ( newBrand: Brand ) => {
+    
+    let identificador = newBrand.id === '' ? 'new' : newBrand.id;
 
-
-    let identificador = data.id === '' ? 'new' : data.id;
-
-    const brand = await createUpdateBrand( identificador, data.name, data.state! );
+    const brand = await createUpdateBrand( identificador, newBrand.name, newBrand.state! );
     console.log( "la marca que intento guardar: ", brand );
 
     if ( !brand.ok ) {
@@ -115,16 +96,11 @@ export const BrandForm = ( { idBrand, nameBrand, stateBrand }: Props ) => {
             <option value="activo">Activo</option>
             <option value="inactivo">Inactivo</option>
           </select>
-
-
         </div>
-
-
 
       </div>
 
       <div className="flex justify-center gap-2">
-
         <Link href='/admin/brands' className="btn-secondary">Regresar</Link>
         <button className="btn-primary w-32">Guardar</button>
       </div>

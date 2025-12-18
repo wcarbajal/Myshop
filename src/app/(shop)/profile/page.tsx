@@ -2,7 +2,8 @@ import { auth } from "@/auth";
 import { Title } from "@/components";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MdOutlineAlternateEmail, MdCardTravel, MdOutlineGroup, MdOutlinePersonPin, MdOutlinePhoneIphone } from "react-icons/md";
+import { ChangePasswordForm } from "@/components/profile/ChangePasswordForm";
+import { MdOutlineAlternateEmail, MdCardTravel, MdOutlineGroup, MdOutlinePhoneIphone } from "react-icons/md";
 
 
 export default async function ProfilePage() {
@@ -130,6 +131,9 @@ export default async function ProfilePage() {
               </button>
             </div>
           </div>
+
+          {/* Sección de cambiar contraseña */ }
+          <ChangePasswordForm />
         </div>
       </div>
     </div>
