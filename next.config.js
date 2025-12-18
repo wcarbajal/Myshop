@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
- 
+  // Asegurar que las variables de entorno estén disponibles
+  env: {
+    NEXT_PUBLIC_CULQI_PUBLIC_KEY: process.env.NEXT_PUBLIC_CULQI_PUBLIC_KEY,
+  },
+
   images: {
     remotePatterns: [
       {

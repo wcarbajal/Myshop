@@ -1,6 +1,10 @@
 import { CulqiCheckout } from '@/components/pasarela/CulqiCheckout';
+import { CulqiDiagnostic } from '@/components/pasarela/CulqiDiagnostic';
 
 export default function TestPagoPage() {
+  // Obtener la llave pública del lado del servidor
+  const publicKey = process.env.NEXT_PUBLIC_CULQI_PUBLIC_KEY;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
@@ -76,6 +80,7 @@ export default function TestPagoPage() {
             amount={ 53.69 }
             email="test@ejemplo.com"
             description="Orden de prueba - MyShop"
+            publicKey={ publicKey }
           />
         </div>
 
@@ -96,6 +101,9 @@ export default function TestPagoPage() {
           </p>
         </div>
       </div>
+
+      {/* Componente de Diagnóstico */ }
+      <CulqiDiagnostic />
     </div>
   );
 }

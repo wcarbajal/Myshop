@@ -2,12 +2,14 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '../ui/button';
+import { culqiConfig } from '@/config/culqi';
 
 interface Props {
   orderId: string;
   amount: number; // Monto en soles (ej: 100.50)
   email: string;
   description?: string;
+  publicKey?: string; // Llave pública de Culqi
 }
 
 declare global {
@@ -17,10 +19,28 @@ declare global {
   }
 }
 
-export const CulqiCheckout = ( { orderId, amount, email, description }: Props ) => {
+export const CulqiCheckout = ( { orderId, amount, email, description, publicKey }: Props ) => {
   const [ isLoading, setIsLoading ] = useState( false );
   const [ error, setError ] = useState<string | null>( null );
   const [ success, setSuccess ] = useState( false );
+
+  // Intentar obtener la llave pública de diferentes fuentes
+  const culqiPublicKey = publicKey || culqiConfig.publicKey;
+
+  // Debug: mostrar la llave en consola (solo para desarrollo)
+  useEffect( () => {
+    if ( process.env.NODE_ENV === 'development' ) {
+      console.log( '🔑 Culqi Public Key:', culqiPublicKey ? 'Configurada ✅' : 'No configurada ❌' );
+      console.log( '🔑 Key value:', culqiPublicKey );
+    }
+  }, [ culqiPublicKey ] );
+
+  useEffect( () => {
+    if ( !culqiPublicKey ) {
+      setError( 'Error de configuración: Llave pública de Culqi no disponible' );
+      console.error( '❌ No se encontró NEXT_PUBLIC_CULQI_PUBLIC_KEY' );
+    }
+  }, [ culqiPublicKey ] );
 
   const processPayment = useCallback( async ( token: string ) => {
     try {
@@ -70,9 +90,15 @@ export const CulqiCheckout = ( { orderId, amount, email, description }: Props ) 
     document.body.appendChild( script );
 
     script.onload = () => {
-      // Configurar Culqi con la llave pública
+      // Verificar que tengamos la llave pública
+      if ( !culqiPublicKey ) {
+        console.error( 'NEXT_PUBLIC_CULQI_PUBLIC_KEY no está definida' );
+        setError( 'Error de configuración: Llave pública no definida' );
+        return;
+      }
+
       if ( window.Culqi ) {
-        window.Culqi.publicKey = process.env.NEXT_PUBLIC_CULQI_PUBLIC_KEY;
+        window.Culqi.publicKey = culqiPublicKey;
 
         // Configurar opciones de Culqi
         window.Culqi.options( {
@@ -113,7 +139,7 @@ export const CulqiCheckout = ( { orderId, amount, email, description }: Props ) 
         document.body.removeChild( script );
       }
     };
-  }, [ processPayment ] );
+  }, [ processPayment, culqiPublicKey ] );
 
   const handlePayClick = () => {
     if ( !window.Culqi ) {
