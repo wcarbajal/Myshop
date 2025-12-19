@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Culqi from 'culqi-node';
+import prisma from '@/lib/prisma';
 
 /**
  * API Route para crear un cargo en Culqi
@@ -36,15 +37,15 @@ export async function POST( request: Request ) {
 
     // Si el cargo fue exitoso
     if ( charge.object === 'charge' && charge.outcome.type === 'venta_exitosa' ) {
-      // TODO: Actualizar la orden en la base de datos como pagada
-      // await prisma.order.update({
-      //   where: { id: orderId },
-      //   data: {
-      //     isPaid: true,
-      //     paidAt: new Date(),
-      //     transactionId: charge.id,
-      //   },
-      // });
+      // Actualizar la orden en la base de datos como pagada
+      await prisma.order.update( {
+        where: { id: orderId },
+        data: {
+          isPaid: true,
+          paidAt: new Date(),
+          transactionId: charge.id,
+        },
+      } );
 
       return NextResponse.json( {
         success: true,

@@ -21,6 +21,7 @@ export { getPaginatedOrders } from './order/get-paginated-orders';
 export { placeOrder } from './order/place-order';
 export { paypalCheckPayment } from './payments/paypal-check-payment';
 export { setTransactionId } from './payments/set-transaction-id';
+export { updateOrderPayment } from './payments/update-order-payment';
 export { createUpdateProduct } from './product/create-update-product';
 export { deleteProductImage } from './product/delete-product-image';
 export { deleteProduct } from './product/delete-product';
