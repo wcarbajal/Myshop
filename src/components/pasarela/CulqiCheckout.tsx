@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { culqiConfig } from '@/config/culqi';
-import Swal from 'sweetalert2';
 
 interface Props {
   orderId: string;
@@ -44,35 +43,6 @@ export const CulqiCheckout = ( { orderId, amount, email, description, publicKey 
   }, [ culqiPublicKey ] );
 
   const processPayment = useCallback( async ( token: string ) => {
-    // Mostrar alerta de espera
-    Swal.fire( {
-      title: '¡Procesando Pago!',
-      html: `
-        <div class="text-center">
-          <div class="mb-4">
-            <svg class="animate-spin h-16 w-16 mx-auto text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          </div>
-          <p class="text-lg font-semibold text-gray-700 mb-2">Estamos procesando tu pago</p>
-          <p class="text-sm text-gray-600 mb-3">Por favor, espera un momento...</p>
-          <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
-            <p class="text-sm text-yellow-800 font-medium">
-              ⚠️ <strong>¡Importante!</strong> No cierres esta ventana ni recargues la página
-            </p>
-          </div>
-        </div>
-      `,
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      allowEnterKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    } );
-
     try {
       setIsLoading( true );
       setError( null );
@@ -97,47 +67,15 @@ export const CulqiCheckout = ( { orderId, amount, email, description, publicKey 
         setSuccess( true );
         setError( null );
 
-        // Cerrar la alerta de carga y mostrar éxito
-        Swal.fire( {
-          icon: 'success',
-          title: '¡Pago Realizado Exitosamente!',
-          html: `
-            <p class="text-gray-700 mb-2">Tu orden ha sido confirmada y el pago ha sido procesado correctamente.</p>
-            <p class="text-sm text-gray-500">Redirigiendo a tu orden...</p>
-          `,
-          timer: 3000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-        } );
-
         // Redirigir a página de éxito después de 3 segundos
         setTimeout( () => {
           window.location.href = `/orders/${ orderId }`;
         }, 3000 );
       } else {
-        // Cerrar alerta de carga y mostrar error
-        Swal.fire( {
-          icon: 'error',
-          title: 'Error en el Pago',
-          text: data.error || 'Error al procesar el pago',
-          confirmButtonText: 'Entendido',
-          confirmButtonColor: '#f97316',
-        } );
         setError( data.error || 'Error al procesar el pago' );
       }
     } catch ( err ) {
       console.error( 'Error procesando pago:', err );
-
-      // Cerrar alerta de carga y mostrar error
-      Swal.fire( {
-        icon: 'error',
-        title: 'Error de Conexión',
-        text: 'Error al procesar el pago. Por favor, intenta nuevamente.',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#f97316',
-      } );
-
       setError( 'Error al procesar el pago. Por favor, intenta nuevamente.' );
     } finally {
       setIsLoading( false );
@@ -215,9 +153,9 @@ export const CulqiCheckout = ( { orderId, amount, email, description, publicKey 
     // Nota: El campo 'order' se eliminó porque causa errores de validación en Culqi v4
     // El orderId se enviará cuando se procese el cargo
     window.Culqi.settings( {
-      title: 'MyShop',
+      title: 'MyShop - ⚠️ No cerrar ventana',
       currency: 'PEN',
-      description: description || `Orden #${ orderId.split( '-' ).at( -1 ) }`,
+      description: `${ description || `Orden #${ orderId.split( '-' ).at( -1 ) }` } - Por favor no cierre esta ventana hasta completar el pago`,
       amount: Math.round( amount * 100 ), // Convertir a céntimos
     } );
 
